@@ -32,7 +32,7 @@ def animate(i, xs, ys):
     # Add x and y to lists
     t_stamp = dt.datetime.now().strftime('%H:%M:%S.%f')
     t_diff = time() - t_start
-    xs.append(t_diff)
+    xs.append("{:.3f}".format(t_diff))
     ys.append(temp_c)
 
     # Log temperature
