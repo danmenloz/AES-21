@@ -7,9 +7,9 @@ import matplotlib.animation as animation
 import datetime as dt
 
 # Function to write temperature log
-def write_temp(temp):
+def write_temp(t_stamp, t_diff, temp):
     with open("cpu_temp.csv", "a") as log:
-        log.write("{0},{1}\n".format(strftime("%Y-%m-%d %H:%M:%S"),str(temp)))
+        log.write("{},{:.4f},{:.2f}\n".format(t_stamp,t_diff,temp))        
 
 # Object to read temperature
 cpu = CPUTemperature()
@@ -20,18 +20,23 @@ ax = fig.add_subplot(1, 1, 1)
 xs = []
 ys = []
 
+# Start time stamp
+t_start = time()
+
 # This function is called periodically from FuncAnimation
 def animate(i, xs, ys):
 
     # Read temperature (Celsius)
-    temp_c = round(cpu.temperature, 2)
+    temp_c = cpu.temperature
 
     # Add x and y to lists
-    xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+    t_stamp = dt.datetime.now().strftime('%H:%M:%S.%f')
+    t_diff = time() - t_start
+    xs.append(t_diff)
     ys.append(temp_c)
 
     # Log temperature
-    write_temp(temp_c)
+    write_temp(t_stamp, t_diff, temp_c)
 
     # Limit x and y lists to 20 items
     xs = xs[-20:]
@@ -49,5 +54,5 @@ def animate(i, xs, ys):
 
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=500)
 plt.show()
