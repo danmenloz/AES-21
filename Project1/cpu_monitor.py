@@ -17,12 +17,12 @@ cpu = CPUTemperature()
 
 # Create figure for plotting
 # fig, axs = plt.subplots(2, 2)
-fig = plt.figure(constrained_layout=True)
-gs = GridSpec(3, 2, figure=fig)
+fig = plt.figure() #constrained_layout=True
+gs = GridSpec(4, 2, figure=fig, hspace=0.5)
 ax1 = fig.add_subplot(gs[0, :])
 ax2 = fig.add_subplot(gs[1, :])
-ax3 = fig.add_subplot(gs[2, 0:1])
-ax4 = fig.add_subplot(gs[2, 1:2])
+ax4 = fig.add_subplot(gs[2:, 0:1])
+ax3 = fig.add_subplot(gs[2:, 1:2])
 axis = (ax1,ax2,ax3,ax4,ax4)
 
 
@@ -68,8 +68,8 @@ def animate(i, xtime, ytemp, yfreq, yvolt):
         ax.clear() 
     ax1.plot(xtime, ytemp, 'tab:red')
     ax2.plot(xtime, yfreq)
-    ax3.scatter(ytemp, yfreq, c="orange")
-    ax4.scatter(yvolt, yfreq, c="green")
+    ax3.scatter(yfreq, ytemp, c="orange")
+    ax4.scatter(yfreq, yvolt, c="green")
 
     # Format plot
     fig.suptitle("CPU Monitor")
@@ -85,9 +85,9 @@ def animate(i, xtime, ytemp, yfreq, yvolt):
             idx = int((n-1)/m*i)
             new_labels[idx] = str(xtime[idx])
         ax2.set_xticklabels(new_labels)
-    ax3.set(xlabel='Temperature (°C)', ylabel='Frequency (GHz)')
-    ax4.set(xlabel='Voltage (V)', ylabel='Frequency (MHz)')
+    ax3.set(ylabel='Temperature (°C)', xlabel='Frequency (MHz)')
+    ax4.set(ylabel='Voltage (V)', xlabel='Frequency (MHz)')
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xtime, ytemp, yfreq, yvolt), interval=500)
+ani = animation.FuncAnimation(fig, animate, fargs=(xtime, ytemp, yfreq, yvolt), interval=50)
 plt.show()
