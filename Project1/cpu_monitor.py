@@ -1,6 +1,7 @@
 from gpiozero import CPUTemperature
 from time import sleep, strftime, time
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 import matplotlib.animation as animation
 import datetime as dt
 import re
@@ -15,15 +16,17 @@ def write_log(t_stamp, t_diff, temp, freq, volt):
 cpu = CPUTemperature()
 
 # Create figure for plotting
-# fig = plt.figure()
-# ax = fig.add_subplot(1, 1, 1)
+# fig, axs = plt.subplots(2, 2)
+fig = plt.figure(constrained_layout=True)
+gs = GridSpec(3, 2, figure=fig)
+ax1 = fig.add_subplot(gs[0, :])
+ax2 = fig.add_subplot(gs[1, :])
+ax3 = fig.add_subplot(gs[2, 0:1])
+ax4 = fig.add_subplot(gs[2, 1:2])
+axis = (ax1,ax2,ax3,ax4,ax4)
 
-fig, axs = plt.subplots(2, 2)
-# axs[0, 0].hist(data[0])
-# axs[1, 0].scatter(data[0], data[1])
-# axs[0, 1].plot(data[0], data[1])
-# axs[1, 1].hist2d(data[0], data[1])
 
+# Emtpy lists
 xtime = []
 ytemp = []
 yfreq = []
@@ -43,7 +46,7 @@ def animate(i, xtime, ytemp, yfreq, yvolt):
 
     # Read CPU frequency
     freq = re.search("48\)=(.+)\n", output.decode('utf-8'))
-    freq = int(freq.group(1))
+    freq = int(freq.group(1))/1000000.0
 
     # Read CPU voltage
     volt = re.search("=(.+)V\n", output.decode('utf-8'))
@@ -59,31 +62,31 @@ def animate(i, xtime, ytemp, yfreq, yvolt):
 
     # Log data
     write_log(t_stamp, t_diff, temp_c, freq, volt)
-
-    # Limit x and y lists to 20 items
-    # xs = xs[-20:]
-    # ys = ys[-20:]
     
     # Draw x and y lists
-    axs[0,0].clear()
-    axs[0,1].clear()
-    axs[1,0].clear()
-    axs[1,1].clear()
-    axs[0,0].plot(xtime, ytemp)
-    axs[0,1].plot(xtime, yfreq)
-    axs[1,0].scatter(ytemp, yfreq)
-    axs[1,1].scatter(yvolt, yfreq)
+    for ax in axis:
+        ax.clear() 
+    ax1.plot(xtime, ytemp, 'tab:red')
+    ax2.plot(xtime, yfreq)
+    ax3.scatter(ytemp, yfreq, c="orange")
+    ax4.scatter(yvolt, yfreq, c="green")
 
     # Format plot
-    axs[0, 0].set_title('CPU Temperature')
-    axs[0, 1].set_title('CPU Frequency')
-    axs[1, 0].set_title('Temp vs Freq')
-    axs[1, 1].set_title('Voltage vs Freq')
-    # plt.xticks(rotation=45, ha='right')
-    # plt.subplots_adjust(bottom=0.30)
-    # plt.title('Temperature over Time')
-    # plt.ylabel('Temperature (deg C)')
-
+    fig.suptitle("CPU Monitor")
+    ax1.set(ylabel='Temperature (°C)')
+    ax1.set_xticklabels([])
+    ax2.set(ylabel='Frequency (MHz)', xlabel='Time (sec)')
+    n = len(xtime)
+    m = 5 # number of tick labels to leave
+    if n>m:
+        new_labels = ['']*n # emtpy list
+        new_labels[-1] = str(xtime[-1]) # last tick label
+        for i in range(m):
+            idx = int((n-1)/m*i)
+            new_labels[idx] = str(xtime[idx])
+        ax2.set_xticklabels(new_labels)
+    ax3.set(xlabel='Temperature (°C)', ylabel='Frequency (GHz)')
+    ax4.set(xlabel='Voltage (V)', ylabel='Frequency (MHz)')
 
 # Set up plot to call animate() function periodically
 ani = animation.FuncAnimation(fig, animate, fargs=(xtime, ytemp, yfreq, yvolt), interval=500)
