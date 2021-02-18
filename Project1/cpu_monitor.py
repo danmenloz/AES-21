@@ -16,7 +16,6 @@ def write_log(t_stamp, t_diff, temp, freq, volt):
 cpu = CPUTemperature()
 
 # Create figure for plotting
-# fig, axs = plt.subplots(2, 2)
 fig = plt.figure() #constrained_layout=True
 gs = GridSpec(4, 2, figure=fig, hspace=0.5)
 ax1 = fig.add_subplot(gs[0, :])
@@ -25,6 +24,13 @@ ax4 = fig.add_subplot(gs[2:, 0:1])
 ax3 = fig.add_subplot(gs[2:, 1:2])
 axis = (ax1,ax2,ax3,ax4,ax4)
 
+# Axes limits
+ax1.set_ylim([0,100])
+ax2.set_ylim([0,160000000])
+ax3.set_xlim([0,160000000])
+ax3.set_ylim([0,100])
+ax4.set_xlim([0,160000000])
+ax4.set_ylim([0,7])
 
 # Emtpy lists
 xtime = []
