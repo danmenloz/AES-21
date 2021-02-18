@@ -12,6 +12,9 @@ def write_log(t_diff, temp, freq, volt):
     with open("cpu_log.csv", "a") as log:
         log.write("{:.4f},{:.2f},{},{}\n".format(t_diff,temp,freq,volt))        
 
+# Clear log file
+subprocess.Popen("rm cpu_log.csv",shell=True)
+
 # Object to read temperature
 cpu = CPUTemperature()
 
