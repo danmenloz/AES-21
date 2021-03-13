@@ -98,5 +98,5 @@ def animate(i, xtime, ytemp, yfreq):
     return line1,line2,
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xtime, ytemp, yfreq), interval=10, blit=True)
+ani = animation.FuncAnimation(fig, animate, fargs=(xtime, ytemp, yfreq), interval=1000, blit=True)
 plt.show()
