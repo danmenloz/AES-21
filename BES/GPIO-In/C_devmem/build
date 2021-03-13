@@ -1,0 +1,3 @@
+#!/bin/bash
+gcc LEDecho.c -o LEDecho
+

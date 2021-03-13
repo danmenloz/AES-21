@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <signal.h>	// Defines signal-handling functions (i.e. trap Ctrl-C)
 
 // Modified version to test speed of output changes
 // Can pass integer argument to set toggle delay
@@ -22,9 +23,20 @@ int32_t tog_delay = TOG_DELAY;
 #define GPLVL0       0x34
 static volatile uint32_t *gpio;   // pointer to the gpio (*int)
 
+int run = 1;
+
+// Signal handler callback function to gracefully exit (releasing GPIO mmap) when SIGINT (from Ctrl-C) is received
+// void signal_handler(int sig);
+
+void signal_handler(int sig)
+{
+  printf( "\nCtrl-C pressed, cleaning up and exiting.\n" );
+  run = 0;
+}
+
 int main(int argc, char * argv []) {
   int fd;
-  volatile int x;
+  unsigned int level_in;
   printf("Start of GPIO memory-manipulation test program.\n");
   if(getuid()!=0) {
     printf("You must run this program as root. Exiting.\n");
@@ -52,6 +64,9 @@ int main(int argc, char * argv []) {
     }
   }
 
+  // Set the signal callback for Ctrl-C
+  signal(SIGINT, signal_handler);
+
   // at this point gpio points to the GPIO peripheral base address
 
   // Output: GPIO 17 (header pin 11)
@@ -66,19 +81,13 @@ int main(int argc, char * argv []) {
   *(gpio + 2) = (*(gpio + 2) & ~(7 << 21) | (0 << 21));
   // writing the 000 is not necessary but is there for clarity
 
-  do {
-    for (int burst = 0; burst<4; burst++) {
-      // Toggle the LED on using the bit 17 on the GPSET0 register
+  while (run) {
+    level_in = (*(gpio+(GPLVL0/4))) & (1<<27); // get bit 27
+    if (level_in)
       *(gpio + (GPSET0/4)) = 1 << 17;  // Turn the LED on
-      // consider gpio->GP_SET0 = ...
-      //      for(x=0;x<tog_delay;x++){}  // delay 
+    else
       *(gpio + (GPCLR0/4)) = 1 << 17;  // turn the LED off
-      //      for(x=0;x<tog_delay;x++){}  // delay 
-    }    
-    for(x=0;x<1000;x++){}  // delay
-  } while((*(gpio+(GPLVL0/4))&(1<<27))==0); // only true if bit 27 high
-
-  printf("Button was pressed - end of example program.\n");
+  } 
   close(fd);
   return 0;
 }

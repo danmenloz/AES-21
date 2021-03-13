@@ -1,2 +1,3 @@
 #!/bin/bash
-gcc LEDflash.c -o ledflash
+gcc LEDflash.c -o LEDflash
+gcc GPIOdevmem.c -o GPIOdevmem

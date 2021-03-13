@@ -10,6 +10,10 @@ using namespace std;
 void lightLED(void){
    static int x = 1;
    digitalWrite(LED_GPIO, HIGH);         // turn the LED on
+   // extra writes to widen pulse
+   digitalWrite(LED_GPIO, HIGH);         // turn the LED on
+   digitalWrite(LED_GPIO, HIGH);         // turn the LED on
+   digitalWrite(LED_GPIO, HIGH);         // turn the LED on
    digitalWrite(LED_GPIO, LOW);         // turn the LED off
    cout << "Button pressed " << x++ << " times! LED on" << endl;
 }

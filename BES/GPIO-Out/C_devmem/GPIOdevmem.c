@@ -8,23 +8,21 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-// Modified version to test speed of output changes
-// Can pass integer argument to set toggle delay
-// Still accepts change on input pin to stop 
+// GPIO_BASE is 0x20000000 on RPi models other than the RPi 2
+// #define GPIO_BASE    0x3F200000   // on the RPi 2
+#define GPIO_BASE	0xFE200000   // on RPi 4
 
-#define TOG_DELAY (100)
-int32_t tog_delay = TOG_DELAY;
+// from figure in 6.1 in BCM2835 Peripherals manual
+#define GPFSEL1_W  (0x04/4)
+#define GPFSEL2_W  (0x08/4)
+#define GPSET0_W   (0x1c/4)
+#define GPCLR0_W   (0x28/4)
+#define GPLVL0_W   (0x34/4)
 
-// To find GPIO base  address, cat /proc/iomem and look for .gpio entry
-#define GPIO_BASE    0xFE200000   // on RPi 4
-#define GPSET0       0x1c         // from Figure 6-X in BCM Peripheral Manual
-#define GPCLR0       0x28
-#define GPLVL0       0x34
 static volatile uint32_t *gpio;   // pointer to the gpio (*int)
 
 int main(int argc, char * argv []) {
-  int fd;
-  volatile int x;
+  int fd, x, tog_delay=1000;
   printf("Start of GPIO memory-manipulation test program.\n");
   if(getuid()!=0) {
     printf("You must run this program as root. Exiting.\n");
@@ -58,25 +56,29 @@ int main(int argc, char * argv []) {
   // Set up the LED GPIO FSEL17 mode = 001 at addr GPFSEL1 (0004)
   // remember that adding one 32-bit value moves the addr by 4 bytes
   // writing NOT 7 (i.e., ~111) clears bits 21, 22 and 23.
-  *(gpio + 1) = (*(gpio + 1) & ~(7 << 21) | (1 << 21));
-
+  //   *(gpio + 1) = (*(gpio + 1) & ~(7 << 21) | (1 << 21));
+  gpio[GPFSEL1_W] = gpio[GPFSEL1_W] & ~(7 << 21) | (1 << 21);
+   
   // Input: GPIO 27 (header pin 13)
   // set up the button GPIO FSEL27 mode = 000 at addr GPFSEL2 (0008)
   // both FSEL17 and FSEL27 are 21 bits in, but on different registers
-  *(gpio + 2) = (*(gpio + 2) & ~(7 << 21) | (0 << 21));
+  gpio[GPFSEL2_W] = gpio[GPFSEL2_W] & ~(7 << 21) | (0 << 21);
   // writing the 000 is not necessary but is there for clarity
 
   do {
-    for (int burst = 0; burst<4; burst++) {
-      // Toggle the LED on using the bit 17 on the GPSET0 register
-      *(gpio + (GPSET0/4)) = 1 << 17;  // Turn the LED on
-      // consider gpio->GP_SET0 = ...
-      //      for(x=0;x<tog_delay;x++){}  // delay 
-      *(gpio + (GPCLR0/4)) = 1 << 17;  // turn the LED off
-      //      for(x=0;x<tog_delay;x++){}  // delay 
-    }    
-    for(x=0;x<1000;x++){}  // delay
-  } while((*(gpio+(GPLVL0/4))&(1<<27))==0); // only true if bit 27 high
+    // turn the LED on using the bit 17 on the GPSET0 register
+    // *(gpio + (GPSET0/4)) = 1 << 17;  // Turn the LED on
+    gpio[GPSET0_W] = 1 << 17;
+    for(x=0;x<tog_delay;x++){}  // delay hack
+
+     // turn the LED off
+    gpio[GPCLR0_W] = 1 << 17;
+    //  *(gpio + (GPCLR0/4)) = 1 << 17; 
+    for(x=0;x<tog_delay;x++){}  // delay hack
+
+    for(x=0;x<1000;x++){}  // delay hack
+  }
+  while((*(gpio+(GPLVL0_W))&(1<<27))==0); // only true if bit 27 high
 
   printf("Button was pressed - end of example program.\n");
   close(fd);
