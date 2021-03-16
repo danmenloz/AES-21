@@ -1,4 +1,5 @@
 #!/bin/bash
 # g++ -O3 v1.cpp GPIO.cpp -o v1 -pthread
 # g++ -O3 v2.cpp GPIO.cpp -o v2 -pthread
-g++ -O3 v3.cpp GPIO.cpp -o v3 -pthread
+# g++ -O3 v3.cpp GPIO.cpp -o v3 -pthread
+gcc -O3 v4.c -o v4
