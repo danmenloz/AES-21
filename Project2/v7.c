@@ -1,26 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
 
-/*
-Libraries have been installed in:
-   /usr/local/lib
-
-If you ever happen to want to link against installed libraries
-in a given directory, LIBDIR, you must either use libtool, and
-specify the full pathname of the library, or use the '-LLIBDIR'
-flag during linking and do at least one of the following:
-   - add LIBDIR to the 'LD_LIBRARY_PATH' environment variable
-     during execution
-   - add LIBDIR to the 'LD_RUN_PATH' environment variable
-     during linking
-   - use the '-Wl,-rpath -Wl,LIBDIR' linker flag
-   - have your system administrator add LIBDIR to '/etc/ld.so.conf'
-
-See any operating system documentation about shared libraries for
-more information, such as the ld(1) and ld.so(8) manual pages.
-
-*/
-
 #include <errno.h>
 #include <getopt.h>
 #include <gpiod.h>
@@ -33,138 +13,20 @@ more information, such as the ld(1) and ld.so(8) manual pages.
 
 #include "tools-common.h"
 
-static const struct option longopts[] = {
-	{ "help",		no_argument,		NULL,	'h' },
-	{ "version",		no_argument,		NULL,	'v' },
-	{ "active-low",		no_argument,		NULL,	'l' },
-	{ "bias",		required_argument,	NULL,	'B' },
-	{ "num-events",		required_argument,	NULL,	'n' },
-	{ "silent",		no_argument,		NULL,	's' },
-	{ "rising-edge",	no_argument,		NULL,	'r' },
-	{ "falling-edge",	no_argument,		NULL,	'f' },
-	{ "line-buffered",	no_argument,		NULL,	'b' },
-	{ "format",		required_argument,	NULL,	'F' },
-	{ GETOPT_NULL_LONGOPT },
-};
 
-static const char *const shortopts = "+hvlB:n:srfbF:";
+// static void handle_event(unsigned int line_offset, unsigned int event_type,
+// 			 struct timespec *ts)
+// {
+// 	char *evname;
 
-static void print_help(void)
-{
-	printf("Usage: %s [OPTIONS] <chip name/number> <offset 1> <offset 2> ...\n",
-	       get_progname());
-	printf("\n");
-	printf("Wait for events on GPIO lines and print them to standard output\n");
-	printf("\n");
-	printf("Options:\n");
-	printf("  -h, --help:\t\tdisplay this message and exit\n");
-	printf("  -v, --version:\tdisplay the version and exit\n");
-	printf("  -l, --active-low:\tset the line active state to low\n");
-	printf("  -B, --bias=[as-is|disable|pull-down|pull-up] (defaults to 'as-is'):\n");
-	printf("		set the line bias\n");
-	printf("  -n, --num-events=NUM:\texit after processing NUM events\n");
-	printf("  -s, --silent:\t\tdon't print event info\n");
-	printf("  -r, --rising-edge:\tonly process rising edge events\n");
-	printf("  -f, --falling-edge:\tonly process falling edge events\n");
-	printf("  -b, --line-buffered:\tset standard output as line buffered\n");
-	printf("  -F, --format=FMT\tspecify custom output format\n");
-	printf("\n");
-	print_bias_help();
-	printf("\n");
-	printf("Format specifiers:\n");
-	printf("  %%o:  GPIO line offset\n");
-	printf("  %%e:  event type (0 - falling edge, 1 rising edge)\n");
-	printf("  %%s:  seconds part of the event timestamp\n");
-	printf("  %%n:  nanoseconds part of the event timestamp\n");
-}
+// 	if (event_type == GPIOD_LINE_EVENT_RISING_EDGE)
+// 		evname = " RISING EDGE";
+// 	else
+// 		evname = "FALLING EDGE";
 
-struct mon_ctx {
-	unsigned int offset;
-	bool silent;
-	char *fmt;
-};
-
-static void event_print_custom(unsigned int offset,
-			       const struct timespec *ts,
-			       int event_type,
-			       struct mon_ctx *ctx)
-{
-	char *prev, *curr, fmt;
-
-	for (prev = curr = ctx->fmt;;) {
-		curr = strchr(curr, '%');
-		if (!curr) {
-			fputs(prev, stdout);
-			break;
-		}
-
-		if (prev != curr)
-			fwrite(prev, curr - prev, 1, stdout);
-
-		fmt = *(curr + 1);
-
-		switch (fmt) {
-		case 'o':
-			printf("%u", offset);
-			break;
-		case 'e':
-			if (event_type == GPIOD_LINE_EVENT_RISING_EDGE)
-				fputc('1', stdout);
-			else
-				fputc('0', stdout);
-			break;
-		case 's':
-			printf("%ld", ts->tv_sec);
-			break;
-		case 'n':
-			printf("%ld", ts->tv_nsec);
-			break;
-		case '%':
-			fputc('%', stdout);
-			break;
-		case '\0':
-			fputc('%', stdout);
-			goto end;
-		default:
-			fwrite(curr, 2, 1, stdout);
-			break;
-		}
-
-		curr += 2;
-		prev = curr;
-	}
-
-end:
-	fputc('\n', stdout);
-}
-
-static void event_print_human_readable(unsigned int offset,
-				       const struct timespec *ts,
-				       int event_type)
-{
-	char *evname;
-
-	if (event_type == GPIOD_LINE_EVENT_RISING_EDGE)
-		evname = " RISING EDGE";
-	else
-		evname = "FALLING EDGE";
-
-	printf("event: %s offset: %u timestamp: [%8ld.%09ld]\n",
-	       evname, offset, ts->tv_sec, ts->tv_nsec);
-}
-
-static void handle_event(unsigned int line_offset, unsigned int event_type,
-			 struct timespec *timestamp, struct mon_ctx *ctx)
-{
-	if (!ctx->silent) {
-		if (ctx->fmt)
-			event_print_custom(line_offset, timestamp,
-					   event_type, ctx);
-		else
-			event_print_human_readable(line_offset,
-						   timestamp, event_type);
-	}
-}
+// 	printf("event: %s offset: %u timestamp: [%8ld.%09ld]\n",
+// 	       evname, offset, ts->tv_sec, ts->tv_nsec);
+// }
 
 static void handle_signal(int signum UNUSED)
 {
@@ -173,16 +35,15 @@ static void handle_signal(int signum UNUSED)
 
 int main(int argc, char **argv)
 {
-	unsigned int offsets[64], num_lines = 0, offset,
-		     events_wanted = 0, events_done = 0, x;
-	bool watch_rising = false, watch_falling = false;
+	unsigned int offsets[64], num_lines = 1, events_done = 0, x;
+	// bool watch_rising = false, watch_falling = false;
 	int flags = 0;
 	struct timespec timeout = { 10, 0 };
-	int optc, opti, rv, i, y, event_type;
-	struct mon_ctx ctx;
+	int rv, i, y, event_type;
+	// struct mon_ctx ctx;
 	struct gpiod_chip *chip;
 	struct gpiod_line_bulk *lines, *evlines;
-	char *end;
+	// char *end;
 	struct gpiod_line_request_config config;
 	struct gpiod_line *line;
 	struct gpiod_line_event events[16];
@@ -194,94 +55,23 @@ int main(int argc, char **argv)
 	signal(SIGINT, handle_signal);
 	signal(SIGTERM, handle_signal);
 
-	memset(&ctx, 0, sizeof(ctx));
+	offsets[0] = 27; //input
 
-	for (;;) {
-		optc = getopt_long(argc, argv, shortopts, longopts, &opti);
-		if (optc < 0)
-			break;
-
-		switch (optc) {
-		case 'h':
-			print_help();
-			return EXIT_SUCCESS;
-		case 'v':
-			print_version();
-			return EXIT_SUCCESS;
-		case 'l':
-			flags |= GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW;
-			break;
-		case 'B':
-			flags |= bias_flags(optarg);
-			break;
-		case 'n':
-			events_wanted = strtoul(optarg, &end, 10);
-			if (*end != '\0')
-				die("invalid number: %s", optarg);
-			break;
-		case 's':
-			ctx.silent = true;
-			break;
-		case 'r':
-			watch_rising = true;
-			break;
-		case 'f':
-			watch_falling = true;
-			break;
-		case 'b':
-			setlinebuf(stdout);
-			break;
-		case 'F':
-			ctx.fmt = optarg;
-			break;
-		case '?':
-			die("try %s --help", get_progname());
-		default:
-			abort();
-		}
-	}
-
-	argc -= optind;
-	argv += optind;
-
-	if (watch_rising && !watch_falling)
-		event_type = GPIOD_LINE_REQUEST_EVENT_RISING_EDGE;
-	else if (watch_falling && !watch_rising)
-		event_type = GPIOD_LINE_REQUEST_EVENT_FALLING_EDGE;
-	else
-		event_type = GPIOD_LINE_REQUEST_EVENT_BOTH_EDGES;
-
-	if (argc < 1)
-		die("gpiochip must be specified");
-
-	if (argc < 2)
-		die("at least one GPIO line offset must be specified");
-
-	if (argc > 65)
-		die("too many offsets given");
-
-	for (i = 1; i < argc; i++) {
-		offset = strtoul(argv[i], &end, 10);
-		if (*end != '\0' || offset > INT_MAX)
-			die("invalid GPIO offset: %s", argv[i]);
-
-		offsets[i - 1] = offset;
-		num_lines++;
-	}
-
-	chip = chip_open_lookup(argv[0]);
+	chip = chip_open_lookup("gpiochip0");
 	if (!chip)
-		die_perror("unable to open %s", argv[0]);
+		die_perror("unable to open gpiochip0");
 
-	lines = gpiod_chip_get_lines(chip, offsets, num_lines);
+	lines = gpiod_chip_get_lines(chip, offsets, 1);
 	if (!lines)
 		die_perror("unable to retrieve GPIO lines from chip");
 
 	memset(&config, 0, sizeof(config));
 
 	config.consumer = "gpiomon";
-	config.request_type = event_type;
-	config.flags = flags;
+	// config.request_type = event_type;
+	config.request_type = GPIOD_LINE_REQUEST_EVENT_RISING_EDGE;
+	// config.flags = flags;
+	config.flags = 0;
 
 	rv = gpiod_line_request_bulk(lines, &config, NULL);
 	if (rv)
@@ -310,14 +100,15 @@ int main(int argc, char **argv)
 				die_perror("error reading line events");
 
 			for (y = 0; y < rv; y++) {
-				handle_event(gpiod_line_offset(line),
-					     events[y].event_type,
-					     &events[y].ts, &ctx);
+				// handle_event(gpiod_line_offset(line),
+					    //  events[y].event_type,
+					    //  &events[y].ts);
 				events_done++;
 
-				if (events_wanted &&
-				    events_done >= events_wanted)
-					goto done;
+				if (events_done >= 100){
+					printf("100 events \n");
+					events_done = 0;
+				}
 			}
 		}
 	}
