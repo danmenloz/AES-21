@@ -20,6 +20,10 @@ int main() {                             // must be run as root
    digitalWrite (LED_GPIO, LOW);         // LED is off
    static int x = 0;                     // seconds counter
 
+   // int rv = piHiPri(1); // priority 0,96,97,98 and 99 fails... testing with 1 and 95
+   // if (rv)
+   //    printf("Error setting priority %d\n", rv);
+
    // call the lightLED() ISR on the rising edge (i.e., button press)
    wiringPiISR(BUTTON_GPIO, INT_EDGE_RISING, &lightLED);
    while(1){

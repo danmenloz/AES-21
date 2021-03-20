@@ -10,19 +10,22 @@ using namespace std;
 int main(){
    GPIO outGPIO(17), inGPIO(27);    // pin 11 and pin 13
 
+   inGPIO.setDirection(INPUT);      // input
    outGPIO.setDirection(OUTPUT);    // output
-   outGPIO.setValue(LOW);           // clear output
+   outGPIO.streamOpen();          //fast write, ready file
+   outGPIO.streamWrite(LOW);      //turn the LED off
 
    while(1){
        // Wait for rising edge
        while(inGPIO.getValue() != 1){
        }
-       outGPIO.setValue(HIGH);
-       outGPIO.setValue(LOW);  
+       outGPIO.streamWrite(HIGH);    // high
+       outGPIO.streamWrite(LOW);     // immediately low, repeat
        // Wait for falling edge
        while(inGPIO.getValue() != 0){
        }
    }
 
+   outGPIO.streamClose();         //close the output stream
    return 0;
 }

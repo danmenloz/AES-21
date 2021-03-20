@@ -3,6 +3,6 @@
 # g++ -O3 v2.cpp GPIO.cpp -o v2 -pthread
 # g++ -O3 v3.cpp GPIO.cpp -o v3 -pthread
 # gcc -O3 v4.c -o v4
-# g++ -O3 v5.cpp -o v5 -lwiringPi
+g++ -O3 v5.cpp -o v5 -lwiringPi
 # make
-gcc v7.c tools-common.c -o v7 -l gpiod
+# gcc v7.c tools-common.c -o v7 -l gpiod
