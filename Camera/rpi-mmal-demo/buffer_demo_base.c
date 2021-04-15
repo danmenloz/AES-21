@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-// #include <math.h>
+#include <math.h>
+#include <stdint.h>
 
 #include "bcm_host.h"
 #include "interface/vcos/vcos.h"
@@ -20,8 +21,11 @@
 // Realtime
 #include <sched.h>
 
+
+#include "is_options.h"
 #include "video_callback.h"
 #include "keyboard.h"
+#include "PCA9685_servo_driver.h"
 
 // GPIO
 #ifdef LOG_TIMES
@@ -56,6 +60,12 @@ int main(int argc, char** argv) {
     int rc, old_scheduler_policy;
     struct sched_param my_params;
 
+    PCA9685_init(I2C_ADDR);
+    PCA9685_setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+    setServoDegree(SERVO_TILT_CH, ServoTiltDegree);
+    setServoDegree(SERVO_PAN_CH, ServoPanDegree);
+    
+    
 #ifdef LOG_TIMES
     fp = fopen("log.csv", "w");
 #endif
@@ -138,7 +148,7 @@ int main(int argc, char** argv) {
     format->es->video.crop.y = 0;
     format->es->video.crop.width = 1280;
     format->es->video.crop.height = 720;
-    format->es->video.frame_rate.num = 30; // 30;
+    format->es->video.frame_rate.num = 30; // Change frame rate here if needed
     format->es->video.frame_rate.den = 1;
 
 
@@ -201,7 +211,7 @@ int main(int argc, char** argv) {
     format->es->video.crop.y = 0;
     format->es->video.crop.width = 1280;
     format->es->video.crop.height = 720;
-    format->es->video.frame_rate.num = 10; // 30;
+    format->es->video.frame_rate.num = 30; // 30;
     format->es->video.frame_rate.den = 1;
 
     preview_input_port->buffer_size = camera_video_port->buffer_size_recommended;
@@ -257,7 +267,7 @@ int main(int argc, char** argv) {
         printf("%s: Failed to start capture\n", __func__);
     }
 
-    while (1) {
+    while (run) {
       processKeyboardEvent();
     };
 

@@ -1,8 +1,8 @@
 #ifndef VIDEO_CALLBACK_H
 #define VIDEO_CALLBACK_H
 
-#define W_INVERT 300
-#define H_INVERT 300
+#define W_INVERT 1280
+#define H_INVERT 720
 
 #define ASCII_ESC 27
 // #define NUM_DISPLAY 

@@ -26,7 +26,10 @@ void processKeyboardEvent(void){
   tcflush(0, TCIOFLUSH);
   keyVal= get_key_board_from_termios();
   switch (keyVal) {
-  case 27: 
+  case 'q':
+    run = 0; // quit!
+    break;
+  case 27:  // process escape sequence
     keyVal= get_key_board_from_termios();
     if(keyVal == 91){
       keyVal= get_key_board_from_termios();
@@ -49,21 +52,31 @@ void processKeyboardEvent(void){
     show_data = (show_data + 1) % 4;
     break;
   case 'i':
-    is_invert = 1 - is_invert;
-    printf("invert = %d\n", is_invert);
+    invert_rect = 1 - invert_rect;
+    printf("invert_rect = %d\n", invert_rect);
+    break;
+  case 'I':
+    invert = 1 - invert;
+    printf("invert = %d\n", invert);
     break;
   case 't':
     update_target_color = 1;
     break;
   case '+':
-    color_threshold += 10;
+    color_threshold *= 1.1;
     printf("color_threshold = %d\n", color_threshold);
     break;
   case '-':
-    color_threshold -= 10;
-    if (color_threshold < 0)
-      color_threshold = 0;
+    color_threshold *= 0.9;
+    if (color_threshold < 10)
+      color_threshold = 10;
     printf("color_threshold = %d\n", color_threshold);
+    break;
+  case 's': 
+    imstab_servo = 1 - imstab_servo;
+    break;
+  case 'S':
+    imstab_digital = 1 - imstab_digital;
     break;
   default:
     break;
