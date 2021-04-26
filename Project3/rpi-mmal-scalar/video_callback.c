@@ -89,7 +89,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   int translate_image = 0;
   int w=1280, h=720;
   // Default target color 
-  static YUV_T target = {128, 135, 64};   // Green paper
+  static YUV_T target = {168, 137, 79}; //{128, 135, 64};   // Green paper
   
   clock_gettime(CLOCK_MONOTONIC, &tcf);
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
@@ -138,7 +138,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
 
     YUV_T center_color;
     Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
-    if (show_data > 0)
+    if (show_data > 3)
       printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v); 
     if (update_target_color) {
       target = center_color;
@@ -157,7 +157,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
       Draw_Circle(&img, centroid_x, centroid_y, 10, &white, 1);
       offsetX = img.half_w - centroid_x;
       offsetY = img.half_h - centroid_y;
-      if (show_data > 0) {
+      if (show_data > 3) {
 	printf("Match centroid at (%d, %d) for %d samples\n",
 	       centroid_x, centroid_y, num_matches);
 	printf("Offset = %d, %d\n", offsetX, offsetY);

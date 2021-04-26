@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+project(Project03_scalar)
+
 SET(COMPILE_DEFINITIONS -Werror)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 

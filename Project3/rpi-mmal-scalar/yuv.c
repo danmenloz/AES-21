@@ -85,7 +85,7 @@ void YUV_Translate_Image(YUV_IMAGE_T * dst, YUV_IMAGE_T * src, int dX, int dY, f
   int n_bytes = w;
 
   // make x, y var names consistent
-  if (show_data > 0)
+  if (show_data > 3)
     printf("YUV_Translate_Image(%d, %d, %f)\n", dX, dY, dTheta);
   
   if (dY < 0) {
@@ -113,12 +113,12 @@ void YUV_Translate_Image(YUV_IMAGE_T * dst, YUV_IMAGE_T * src, int dX, int dY, f
     dst1X = 0;
   }
 
-  if (show_data > 1) 
+  if (show_data > 3) 
     printf("n_bytes: %d src1X: %d dst1X: %d \t\tstartY: %d n1: %d incY: %d\n",
 	   n_bytes, src1X, dst1X, startY, n1, incY);
   
   if ((dY != 0) || (dX != 0)) {
-    if (show_data > 1)
+    if (show_data > 3)
       printf("dX, dY = %d, %d\n", dX, dY);
     for (n = 0, y = startY; n < n1; n++, y += incY)
       memcpy(&(dst->bY[y*w + dst1X]), &(src->bY[(y-dY)*w + src1X]), n_bytes); // w   
