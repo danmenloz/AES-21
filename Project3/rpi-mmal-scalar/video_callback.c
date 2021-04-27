@@ -83,7 +83,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   struct timespec t1, t2;
   static struct timespec tpf;
   struct timespec tcf;
-  static long t_sum_ms = 0;
+  static double t_sum_ms = 0;
   static int loop = 0;
   static YUV_IMAGE_T img, img2;
   int translate_image = 0;
