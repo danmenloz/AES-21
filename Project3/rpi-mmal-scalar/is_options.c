@@ -9,4 +9,4 @@ uint8_t ServoTiltDegree = 100;
 uint8_t ServoPanDegree = 0;
 int imstab_servo = 0;
 int imstab_digital = 0;
-int chroma_subsample_sep = 2; // going below 2 has no effect, since chroma is 1/2 subsampled already
+const int chroma_subsample_sep = 2; // going below 2 has no effect, since chroma is 1/2 subsampled already

@@ -28,7 +28,13 @@ void Set_Pixel_yuv(YUV_IMAGE_T * i, int px, int py, YUV_T * yuv);
 void Get_Pixel_yuv(YUV_IMAGE_T * i, int px, int py, YUV_T * yuv);
 
 
-int Sq_UV_Difference_yuv(YUV_T * c1, YUV_T * c2);
+inline __attribute__((always_inline)) int Sq_UV_Difference_yuv(YUV_T * c1, YUV_T * c2){
+  int du, dv;
+  
+  du = (int) c1->u - c2->u;
+  dv = (int) c1->v - c2->v;
+  return du*du + dv*dv;
+}
 void Draw_Line(YUV_IMAGE_T * i, int p1X, int p1Y, int p2X, int p2Y, YUV_T * color);
 void Draw_Circle(YUV_IMAGE_T * i, int pcX, int pcY, int radius, YUV_T * c, int filled);
 void Draw_Rectangle(YUV_IMAGE_T * i, int pcX, int pcY, int dX, int dY, YUV_T * c, int filled);

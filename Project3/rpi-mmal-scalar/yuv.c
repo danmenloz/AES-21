@@ -45,14 +45,6 @@ void Get_Pixel_yuv(YUV_IMAGE_T * i, int px, int py, YUV_T * yuv) {
   yuv->v = i->bV[half_px+half_py*i->half_w];
 }
 
-int Sq_UV_Difference_yuv(YUV_T * c1, YUV_T * c2){
-  int du, dv;
-  
-  du = (int) c1->u - c2->u;
-  dv = (int) c1->v - c2->v;
-  return du*du + dv*dv;
-}
-
 void YUV_Image_Copy(YUV_IMAGE_T * dst, YUV_IMAGE_T * src) {
   // Copy bitplanes
   // Warning: assumes images are same size. Should check for this.
