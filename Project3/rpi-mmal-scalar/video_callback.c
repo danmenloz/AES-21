@@ -44,9 +44,12 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
   int offsetX=0, offsetY=0;
   YUV_T color;
   int cx=0, cy=0;
+
+  int y_end = i->h - sep/2;
+  int x_end = i->w - sep/2;
   
-  for (y = sep/2; y <= i->h - sep/2; y += sep) { 
-    for (x = sep/2; x <= i->w - sep/2; x += sep) {
+  for (y = sep/2; y <= y_end; y += sep) { 
+    for (x = sep/2; x <= x_end; x += sep) {
       Get_Pixel_yuv(i, x,y, & color);
       // Identify pixels with right color
       int diff = Sq_UV_Difference_yuv(&color, tc);
