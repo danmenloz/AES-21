@@ -35,7 +35,7 @@ void clear_term_screen(void) {
   printf("\033[2J");
 }
 
-int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
+int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
   int x, y;
   int matches=0;
   #if MIN_MAX_CENTROID
