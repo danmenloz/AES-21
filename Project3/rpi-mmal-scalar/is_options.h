@@ -9,6 +9,7 @@ extern int run;
 extern int invert, invert_rect;
 extern int update_target_color;
 extern int show_data;
+extern int highlight_matches;
 extern int color_threshold;
 extern int imstab_servo;
 extern int imstab_digital;

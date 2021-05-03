@@ -64,11 +64,13 @@ int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restri
         #endif
 
         matches++;
-        if (sep > 10)
-          Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
-        else {
-          Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
-          Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
+        if (highlight_matches){
+          if (sep > 10)
+            Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
+          else {
+            Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
+            Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
+          }
         }
       }
     }
@@ -121,6 +123,8 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
   YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
   
+  Draw_Rectangle(&img, 1280-100, 720-100, 4, 4, &red, 1);
+
   if (invert) { // Y: luminance.
     // Invert Luminance, one word at a time
     unsigned int * Y32 = (unsigned int * ) Y;
@@ -207,7 +211,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   t_sum_ms += t/1000000;
 
   if (show_data > 0) {
-    if ((loop & 0x01) == 0) { // change display fequency here!
+    if ((loop & 0x0F) == 0) { // change display frequency here!
       printf("%4d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms\n", loop, t/1000000.0, ((double) t_sum_ms)/loop);
     }
   }

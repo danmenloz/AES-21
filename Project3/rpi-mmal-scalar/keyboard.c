@@ -78,6 +78,10 @@ void processKeyboardEvent(void){
   case 'S':
     imstab_digital = 1 - imstab_digital;
     break;
+  case 'h':
+    highlight_matches = 1 - highlight_matches;
+    printf("highlight_matches = %d\n", highlight_matches);
+    break;
   default:
     break;
   }

@@ -4,6 +4,7 @@ int run=1;
 int invert=0, invert_rect=0;
 int update_target_color=0;
 int show_data=1;
+int highlight_matches = 0;
 int color_threshold=300;
 uint8_t ServoTiltDegree = 100;
 uint8_t ServoPanDegree = 0;
