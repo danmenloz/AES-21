@@ -100,7 +100,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   int translate_image = 0;
   int w=1280, h=720;
   // Default target color 
-  static YUV_T target = {168, 137, 79}; //{128, 135, 64};   // Green paper
+  static YUV_T target = {64, 120, 197}; //red
   
   clock_gettime(CLOCK_MONOTONIC, &tcf);
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
@@ -123,7 +123,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
   YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
   
-  Draw_Rectangle(&img, 1280-100, 720-100, 4, 4, &red, 1);
+  Draw_Rectangle(&img, 1280/2+100, 720/2-100, 100, 100, &red, 1);
 
   if (invert) { // Y: luminance.
     // Invert Luminance, one word at a time
