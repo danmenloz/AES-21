@@ -82,6 +82,12 @@ void processKeyboardEvent(void){
     highlight_matches = 1 - highlight_matches;
     printf("highlight_matches = %d\n", highlight_matches);
     break;
+  case 'r':
+    debug_rectangle = (debug_rectangle + 1)%3;
+    printf("debug_rectangle = %d\n", debug_rectangle);
+    if (debug_rectangle)
+      update_target_color = 1;
+    break;
   default:
     break;
   }

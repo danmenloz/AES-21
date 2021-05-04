@@ -116,22 +116,22 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
       
       mask = vcleq_s16(sq_uv_diff, vld1q_dup_s16(&(color_threshold)));
 
+      if (highlight_matches){
+        /* Highlighting */
+        Y_image_u.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[0]);
+        Y_image_u.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[1]);
+        Y_image_l.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[0]);
+        Y_image_l.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[1]);
 
-      /* Highlighting */
-      Y_image_u.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[0]);
-      Y_image_u.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[1]);
-      Y_image_l.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[0]);
-      Y_image_l.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[1]);
+        U_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.u)), U_image_8);
+        V_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.v)), V_image_8);
 
-      U_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.u)), U_image_8);
-      V_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.v)), V_image_8);
+        vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
+        vst2_u8(&(i->bY[y*w + x]), Y_image_l);
 
-      vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
-      vst2_u8(&(i->bY[y*w + x]), Y_image_l);
-
-      vst1_u8(&(i->bU[y/2*half_w + x/2]), U_image_8);
-      vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
-
+        vst1_u8(&(i->bU[y/2*half_w + x/2]), U_image_8);
+        vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
+      }
 
       mask = vandq_u16(mask, vdupq_n_u16(1));
 
@@ -252,6 +252,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   int w=1280, h=720;
   // Default target color 
   static YUV_T target = {64, 120, 197}; //red
+  static int debug_rect_X=1280/2, debug_rect_Y=720/2;
   
   clock_gettime(CLOCK_MONOTONIC, &tcf);
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
@@ -274,8 +275,18 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
   YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
   
-  Draw_Rectangle(&img, 1280/2+100, 720/2-100, 80, 80, &red, 1);
-  // Draw_Rectangle(&img, 40, 40, 80, 80, &red, 1);
+  YUV_T center_color;
+  Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
+  if (show_data > 3)
+    printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v); 
+  if (update_target_color) {
+    if (debug_rectangle)
+      target = red;
+    else
+      target = center_color;
+    update_target_color = 0;
+    printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v); 
+  }
 
   if (invert) { // Y: luminance.
     // Invert Luminance, one word at a time
@@ -293,22 +304,23 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
     }
   }
 
-  YUV_T center_color;
-  Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
-  if (show_data > 3)
-    printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v); 
-  if (update_target_color) {
-    target = center_color;
-    update_target_color = 0;
-    printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v); 
+  if (debug_rectangle){
+    // Draw_Rectangle(&img, 1280/2+100, 720/2-100, 80, 80, &red, 1);
+    if ((loop & 0x0F) == 0 && debug_rectangle>1){
+      debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2; //rand()%1200+40;   
+      debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2; //rand()%640+40;  
+    }
+    Draw_Rectangle(&img, debug_rect_X, debug_rect_Y, W_DEBUG_RECT, H_DEBUG_RECT, &red, 1);
+    // Draw_Rectangle(&img, 40, 40, 80, 80, &red, 1);
   }
-
-  // draw center circles
-  draw_overlay_info(&img);
   
   // Find area matching target color
   int centroid_x, centroid_y, num_matches, offsetX, offsetY;
   num_matches = find_chroma_matches(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
+  
+  // draw center circles
+  draw_overlay_info(&img);
+  
   if (num_matches > 0) {  
     // Show centroid
     Draw_Circle(&img, centroid_x, centroid_y, 10, &white, 1);
