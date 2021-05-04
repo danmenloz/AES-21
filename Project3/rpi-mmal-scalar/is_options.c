@@ -5,7 +5,7 @@ int invert=0, invert_rect=0;
 int update_target_color=0;
 int show_data=1;
 int highlight_matches = 0;
-short int color_threshold=1;
+short int color_threshold=300;
 uint8_t ServoTiltDegree = 100;
 uint8_t ServoPanDegree = 0;
 int imstab_servo = 0;
