@@ -25,9 +25,8 @@ add_executable(istool1 keyboard.c is_options.c buffer_demo_base.c yuv.c video_ca
 
 # target_compile_options(mmal_buffer_demo PRIVATE "-O3")
 # target_compile_options(mmal_buffer_demo2 PRIVATE "-O3")
-# "-mfpu=crypto-neon-fp-armv8"
 # "-O3" implies "-ftree-vectorize"
-target_compile_options(istool1 PRIVATE "-O3" "-Ofast" "-g" "-mfloat-abi=hard" "-mcpu=cortex-a72" "-ffast-math")
+target_compile_options(istool1 PRIVATE "-O3" "-Ofast" "-g" "-mfloat-abi=hard" "-mcpu=cortex-a72" "-ffast-math" "-mfpu=crypto-neon-fp-armv8")
 
 # target_link_libraries(mmal_buffer_demo mmal_core mmal_util mmal_vc_client vcos bcm_host rt)
 # target_link_libraries(mmal_buffer_demo2 mmal_core mmal_util mmal_vc_client vcos bcm_host rt)
