@@ -37,7 +37,7 @@ void clear_term_screen(void) {
   printf("\033[2J");
 }
 
-int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
+int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
   short int x, y;
   int matches=0;
   #if MIN_MAX_CENTROID
@@ -47,15 +47,15 @@ int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restri
   YUV_T color;
   int cx=0, cy=0;
   int h = i->h, w = i->w, half_w = i->half_w;
+  YUV_T marker = pink; // higlight color
 
   int y_end = h - sep/2;
 
   // Neon types
-  int16x8_t V_target, V_image, U_target, U_image, Y_image;
+  int16x8_t V_target, V_image, U_target, U_image;
   uint16x8_t sum_pos_X, sum_pos_Y, pos_X_inc, sum_matches;
-  int8x8_t V_target_8, V_image_8, U_target_8, U_image_8, Y_image_8; 
-  uint8x8_t pos_X_inc_8;
-  int8x8x2_t Y_vec; // 2 vectors. Each vector has eight lanes of 8-bit data.
+  uint8x8_t V_target_8, V_image_8, U_target_8, U_image_8, pos_X_inc_8; 
+  uint8x8x2_t Y_image_l, Y_image_u; // This a 2 vector variable. Each vector has eight lanes of 8-bit data.
 
   sum_pos_X = vdupq_n_u16(0);
   sum_pos_Y = vdupq_n_u16(0);
@@ -64,23 +64,40 @@ int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restri
   pos_X_inc_8 = vcreate_u8(0x0E0C0A0806040200); //vcreate_u8(0x00020406080A0C0E);
   pos_X_inc = vmovl_u8(pos_X_inc_8);
 
-  U_target_8 = vld1_dup_s8(&(tc->u));
-  V_target_8 = vld1_dup_s8(&(tc->v));
+  U_target_8 = vld1_dup_u8(&(tc->u));
+  V_target_8 = vld1_dup_u8(&(tc->v));
 
-  U_target = vmovl_s8(U_target_8);
-  V_target = vmovl_s8(V_target_8);
+  U_target = vreinterpretq_s16_u16(vmovl_u8(U_target_8));
+  V_target = vreinterpretq_s16_u16(vmovl_u8(V_target_8));
 
-  for (y = sep/2; y <= y_end; y += sep) { 
-    for (x = 0; x < w; x += 16) {
+  // for (y = sep/2; y <= y_end; y += sep) { 
+  //   for (x = 0; x < w; x += 16) {
+  for (y = sep/2; y <= 96; y += sep) { 
+    for (x = 0; x < 96; x += 16) {
+      int16_t vec[8];
+      uint8_t vec8[8];
       
-      // Y_vec = vld2_s8(&(i->bY[y*w + x]));
-      // Y_image_8 = Y_vec.val[1];
+      Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
+      Y_image_l = vld2_u8(&(i->bY[y*w + x]));
+      // Y_image_l.val[0]
+      // Y_image_l.val[1]
 
-      U_image_8 = vld1_s8(&(i->bU[y/2*half_w + x/2]));
-      V_image_8 = vld1_s8(&(i->bV[y/2*half_w + x/2]));
+      U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
+      V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
 
-      U_image = vmovl_s8(U_image_8);
-      V_image = vmovl_s8(V_image_8);
+      // vst1_u8(vec8, U_image_8);
+      // printf("U8 : %d %d %d %d %d %d %d %d \n", vec8[0],vec8[1],vec8[2],vec8[3],vec8[4],vec8[5],vec8[6],vec8[7]);
+      // vst1_u8(vec8, V_image_8);
+      // printf("V8 : %d %d %d %d %d %d %d %d \n", vec8[0],vec8[1],vec8[2],vec8[3],vec8[4],vec8[5],vec8[6],vec8[7]);
+
+      U_image = vreinterpretq_s16_u16(vmovl_u8(U_image_8));
+      V_image = vreinterpretq_s16_u16(vmovl_u8(V_image_8));
+
+      /* Print vector */
+      // vst1q_s16(vec, U_image);
+      // printf("U16: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
+      // vst1q_s16(vec, V_image);
+      // printf("V16: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
 
       int16x8_t du, dv, mu, mv, sq_uv_diff;
       uint16x8_t posX, posY, masked_pos_X, masked_pos_Y, mask;
@@ -93,13 +110,34 @@ int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restri
       mv = vmulq_s16(dv,dv);
 
       sq_uv_diff = vaddq_s16(mu, mv);
-
+      
       mask = vcleq_s16(sq_uv_diff, vld1q_dup_s16(&(color_threshold)));
-      mask = vandq_u16(mask, vdupq_n_u16(1));
+
+      /* Highlighting */
       // mask = vreinterpretq_s16_u16(mask_u);
       // vst1q_s16_x4()
-      mask_vis = vmul_u8(vmovn_u16(mask), vdup_n_u8(255) );
-      vst1_u8(&(i->bU[y/2*half_w + x/2]), mask_vis);
+      // mask_vis = vmul_u8(vmovn_u16(mask), vdup_n_u8(255) );
+      // vst1_u8(&(i->bU[y/2*half_w + x/2]), mask_vis);
+
+      // mask_vis = vmul_u8(vmovn_u16(mask), vdup_n_u8(255) );
+
+      Y_image_u.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[0]);
+      Y_image_u.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[1]);
+      Y_image_l.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[0]);
+      Y_image_l.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[1]);
+
+      U_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.u)), U_image_8);
+      V_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.v)), V_image_8);
+
+      vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
+      vst2_u8(&(i->bY[y*w + x]), Y_image_l);
+
+      vst1_u8(&(i->bU[y/2*half_w + x/2]), U_image_8);
+      vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
+
+
+
+      mask = vandq_u16(mask, vdupq_n_u16(1));
 
       posX = vaddq_u16(pos_X_inc, vld1q_dup_u16(&x));
       posY = vld1q_dup_u16(&y);
@@ -223,7 +261,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
   YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
   
-  Draw_Rectangle(&img, 1280/2+100, 720/2-100, 100, 100, &red, 1);
+  Draw_Rectangle(&img, 40, 40, 80, 80, &red, 1);
 
   if (invert) { // Y: luminance.
     // Invert Luminance, one word at a time
