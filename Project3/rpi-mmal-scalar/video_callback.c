@@ -37,19 +37,15 @@ void clear_term_screen(void) {
   printf("\033[2J");
 }
 
-int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
+int find_chroma_matches_neon(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
   short int x, y;
   int matches=0;
-  #if MIN_MAX_CENTROID
-    unsigned int min_x=0xffffffff, max_x=0, min_y=0xffffffff, max_y=0;
-  #endif
   int offsetX=0, offsetY=0;
   YUV_T color;
   int cx=0, cy=0;
   int h = i->h, w = i->w, half_w = i->half_w;
   YUV_T marker = pink; // higlight color
-
-  int y_end = h - sep/2;
+  sep = 2; //override chroma subsample separation
 
   // Neon types
   int16x8_t V_target, V_image, U_target, U_image;
@@ -59,53 +55,41 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
   uint16x4_t sum_u, sum_l;
   uint32x2_t sum;
 
+  // initialize sums
   sum_pos_X = vdupq_n_u16(0);
   sum_pos_Y = vdupq_n_u16(0);
   sum_matches = vdupq_n_u16(0);
 
-  pos_X_inc_8 = vcreate_u8(0x0E0C0A0806040200); //vcreate_u8(0x00020406080A0C0E);
+  // posX increment: 0 2 4 6 8 10 12 14
+  pos_X_inc_8 = vcreate_u8(0x0E0C0A0806040200);
   pos_X_inc = vmovl_u8(pos_X_inc_8);
 
+  // target U and V channels
   U_target_8 = vld1_dup_u8(&(tc->u));
   V_target_8 = vld1_dup_u8(&(tc->v));
 
   U_target = vreinterpretq_s16_u16(vmovl_u8(U_target_8));
   V_target = vreinterpretq_s16_u16(vmovl_u8(V_target_8));
 
-  // for (y = sep/2; y <= 96; y += sep) { 
-  //   for (x = 0; x < 96; x += 16) {
-  for (y = sep/2; y <= y_end; y += sep) { 
+  for (y = sep/2; y <= h - sep/2; y += sep) { 
     for (x = 0; x < w; x += 16) {
-      int16_t vec[8];
-      uint8_t vec8[8];
-      
-      Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
-      Y_image_l = vld2_u8(&(i->bY[y*w + x]));
-      // Y_image_l.val[0]
-      // Y_image_l.val[1]
-
-      U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
-      V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
-
-      /* Print vector */
-      // vst1_u8(vec8, U_image_8);
-      // printf("U8 : %d %d %d %d %d %d %d %d \n", vec8[0],vec8[1],vec8[2],vec8[3],vec8[4],vec8[5],vec8[6],vec8[7]);
-      // vst1_u8(vec8, V_image_8);
-      // printf("V8 : %d %d %d %d %d %d %d %d \n", vec8[0],vec8[1],vec8[2],vec8[3],vec8[4],vec8[5],vec8[6],vec8[7]);
-
-      U_image = vreinterpretq_s16_u16(vmovl_u8(U_image_8));
-      V_image = vreinterpretq_s16_u16(vmovl_u8(V_image_8));
-
-      /* Print vector */
-      // vst1q_s16(vec, U_image);
-      // printf("U16: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-      // vst1q_s16(vec, V_image);
-      // printf("V16: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-
       int16x8_t du, dv, mu, mv, sq_uv_diff;
       uint16x8_t posX, posY, masked_pos_X, masked_pos_Y, mask;
       uint8x8_t mask_vis;
+      
+      // read Y channel, upper row and lower row
+      Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
+      Y_image_l = vld2_u8(&(i->bY[y*w + x]));
 
+      // read U and V channels
+      U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
+      V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
+
+      // upgrade to signed 16 bits
+      U_image = vreinterpretq_s16_u16(vmovl_u8(U_image_8));
+      V_image = vreinterpretq_s16_u16(vmovl_u8(V_image_8));
+
+      // square UV difference
       du = vsubq_s16(U_image, U_target);
       dv = vsubq_s16(V_image, V_target);
 
@@ -116,8 +100,8 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
       
       mask = vcleq_s16(sq_uv_diff, vld1q_dup_s16(&(color_threshold)));
 
+      // highlighting mask
       if (highlight_matches){
-        /* Highlighting */
         Y_image_u.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[0]);
         Y_image_u.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[1]);
         Y_image_l.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[0]);
@@ -133,33 +117,23 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
         vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
       }
 
+      // convert mask: 11111111 11111111 ... -> 00000001 00000001 ...
       mask = vandq_u16(mask, vdupq_n_u16(1));
 
+      // read pos
       posX = vaddq_u16(pos_X_inc, vld1q_dup_u16(&x));
       posY = vld1q_dup_u16(&y);
 
-      // /* Print vector */
-      // vst1q_u16(vec, posX);
-      // printf(" X: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-      // vst1q_u16(vec, posY);
-      // printf(" Y: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-      // vst1q_u16(vec, mask);
-      // printf(" m: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-
+      // mask pos
       masked_pos_X = vmulq_u16(mask, posX);
       masked_pos_Y = vmulq_u16(mask, posY);
 
-      // /* Print vector */
-      // vst1q_u16(vec, masked_pos_X);
-      // printf("mX: %d %d %d %d %d %d %d %d \n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-      // vst1q_u16(vec, masked_pos_Y);
-      // printf("mY: %d %d %d %d %d %d %d %d \n\n", vec[0],vec[1],vec[2],vec[3],vec[4],vec[5],vec[6],vec[7]);
-
+      // vector sums
       sum_pos_X = vaddq_u16(sum_pos_X, masked_pos_X);
       sum_pos_Y = vaddq_u16(sum_pos_Y, masked_pos_Y);
       sum_matches = vaddq_u16(sum_matches, mask);
 
-      // Sums have to happen inside the loop. O.W. lanes will overflow.
+      // pos scalar sums have to happen inside the loop. O.W. lanes will overflow.
       // sum pos X
       sum_u = vget_high_u16(sum_pos_X);
       sum_l = vget_low_u16(sum_pos_X);
@@ -180,13 +154,50 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
       sum = vpaddl_u16(sum_u);
       cy += vget_lane_u32(sum, 0);
 
-      // Reset pos sums
+      // reset pos sums
       sum_pos_X = vdupq_n_u16(0);
       sum_pos_Y = vdupq_n_u16(0);
 
-      // printf("x,y = %d,%d\n", x,y);
+    }
+  }
 
-      /*
+  // scalar sum matches
+  // safe to sum here since lanes didn't overflow
+  sum_u = vget_high_u16(sum_matches);
+  sum_l = vget_low_u16(sum_matches);
+
+  sum_u = vpadd_u16(sum_u, sum_l);
+  sum_u = vpadd_u16(sum_u, vdup_n_u16(0));
+
+  sum = vpaddl_u16(sum_u);
+  matches = vget_lane_u32(sum, 0);
+
+  // update centroid
+  if (matches > 0) {
+    cx /= matches;
+    cy /= matches;
+  }
+  *rcx = cx;
+  *rcy = cy;
+      
+  return matches;
+}
+
+int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
+  int x, y;
+  int matches=0;
+  #if MIN_MAX_CENTROID
+    unsigned int min_x=0xffffffff, max_x=0, min_y=0xffffffff, max_y=0;
+  #endif
+  int offsetX=0, offsetY=0;
+  YUV_T color;
+  int cx=0, cy=0;
+
+  int y_end = i->h - sep/2;
+  int x_end = i->w - sep/2;
+  
+  for (y = sep/2; y <= y_end; y += sep) { 
+    for (x = sep/2; x <= x_end; x += sep) {
       Get_Pixel_yuv(i, x,y, & color);
       // Identify pixels with right color
       int diff = Sq_UV_Difference_yuv(&color, tc);
@@ -209,23 +220,9 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
             Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
           }
         }
-      }*/
+      }
     }
   }
-
-  // sum matches
-  // Safe to sum here since lanes didn't overflow
-  sum_u = vget_high_u16(sum_matches);
-  sum_l = vget_low_u16(sum_matches);
-
-  sum_u = vpadd_u16(sum_u, sum_l);
-  sum_u = vpadd_u16(sum_u, vdup_n_u16(0));
-
-  sum = vpaddl_u16(sum_u);
-  matches = vget_lane_u32(sum, 0);
-  
-  // printf("matches:%d   cx:%d   cy:%d\n", matches,cx,cy);
-
   if (matches > 0) {
 #if MIN_MAX_CENTROID
     cx = (max_x+min_x)/2;
@@ -250,9 +247,9 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   static YUV_IMAGE_T img, img2;
   int translate_image = 0;
   int w=1280, h=720;
+  static int debug_rect_X=1280/2+100, debug_rect_Y=720/2-100;
   // Default target color 
   static YUV_T target = {64, 120, 197}; //red
-  static int debug_rect_X=1280/2, debug_rect_Y=720/2;
   
   clock_gettime(CLOCK_MONOTONIC, &tcf);
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
@@ -275,9 +272,10 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
   YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
   
+  // update target color
   YUV_T center_color;
   Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
-  if (show_data > 3)
+  if (show_data > 2)
     printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v); 
   if (update_target_color) {
     if (debug_rectangle)
@@ -288,6 +286,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
     printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v); 
   }
 
+  // invert Y channel
   if (invert) { // Y: luminance.
     // Invert Luminance, one word at a time
     unsigned int * Y32 = (unsigned int * ) Y;
@@ -304,29 +303,29 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
     }
   }
 
+  // debug rectangle
   if (debug_rectangle){
-    // Draw_Rectangle(&img, 1280/2+100, 720/2-100, 80, 80, &red, 1);
     if ((loop & 0x0F) == 0 && debug_rectangle>1){
-      debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2; //rand()%1200+40;   
-      debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2; //rand()%640+40;  
+      debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2;  
+      debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2; 
     }
     Draw_Rectangle(&img, debug_rect_X, debug_rect_Y, W_DEBUG_RECT, H_DEBUG_RECT, &red, 1);
-    // Draw_Rectangle(&img, 40, 40, 80, 80, &red, 1);
   }
   
-  // Find area matching target color
+  // find area matching target color
   int centroid_x, centroid_y, num_matches, offsetX, offsetY;
-  num_matches = find_chroma_matches(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
+  num_matches = find_chroma_matches_neon(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
   
   // draw center circles
   draw_overlay_info(&img);
   
+  // image stabilizaton
   if (num_matches > 0) {  
     // Show centroid
     Draw_Circle(&img, centroid_x, centroid_y, 10, &white, 1);
     offsetX = img.half_w - centroid_x;
     offsetY = img.half_h - centroid_y;
-    if (show_data > 2) {
+    if (show_data > 1) {
       printf("Match centroid at (%d, %d) for %d samples\n",
               centroid_x, centroid_y, num_matches);
       printf("Offset = %d, %d\n", offsetX, offsetY);
@@ -361,6 +360,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
       printf("Unable to return a buffer to the video port\n");
   }
 
+  // get precessing time
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
   long t = t2.tv_nsec - t1.tv_nsec;
   if (t<0)
@@ -369,14 +369,15 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
     long period = (tcf.tv_nsec - tpf.tv_nsec);
     if (period < 0)
       period += 1000000000;
-    if (show_data > 3)
+    if (show_data > 2)
       printf("Frame processing time: %.3f of %.3f ms\n", t/1000000.0, period/1000000.0);
   }
   t_sum_ms += t/1000000;
 
+  // print log
   if (show_data > 0) {
-    if ((loop & 0x0F) == 0) { // change display frequency here!
-      printf("%4d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
+    if (loop) { // change display frequency here!
+      printf("%5d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %5d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
     }
   }
   tpf = tcf;
