@@ -5,7 +5,8 @@
 // #define BLANK_EDGES
 
 YUV_T black={0, 128, 128}, white={255, 128, 128}, green={128, 135, 64},
-  orange={128, 101, 192}, blue={128, 90, 158}, pink={180, 200, 200};
+  orange={128, 101, 192}, blue={128, 90, 158}, pink={180, 200, 200},
+  red = {64, 120, 197};
 
 void YUV_Image_Init(YUV_IMAGE_T * i, unsigned char * buffer, int width, int height) {
   // Assumes U, V are 1/4 size of Y
@@ -524,14 +525,54 @@ void Draw_Line(YUV_IMAGE_T * img, int p1X, int p1Y, int p2X, int p2Y, YUV_T * co
 }
 
   /* Draw a rectangle at coordinates xm, ym with specified sides and color c. */
-void Draw_Rectangle(YUV_IMAGE_T * i, int pcX, int pcY, int dX, int dY, YUV_T * c, int filled) {
+ void Draw_Rectangle(YUV_IMAGE_T * i, int pcX, int pcY, int dX, int dY, YUV_T * c, int filled) {
+    int h = i->h, w = i->w, half_w = i->half_w;
+    int p1Y, p2Y;
+    int p1X, p2X;
+    int top=1, right=1, bottom=1, left=1;
+
+    /*
+      (p1X,p1Y) *–– –– –– –              + –– > X
+                |         |              |
+                |         |              v
+                |         |              Y
+                 – –– –– –* (p2X,p2Y)  
+    */
+
+    p1Y = pcY-dY/2; 
+    p2Y = pcY+dY/2;
+    p1X = pcX-dX/2;
+    p2X = pcX+dX/2;
+
+    // clip values
+    if (p1Y < 0) { p1Y = 0; top=0;    }
+    if (p2Y >= h){ p2Y = h; bottom=0; }
+    if (p1X < 0) { p1X = 0; left=0;   }
+    if (p2X >= w){ p2X = w; right=0;  }
+
+    // printf("x: [%d,%d]   y: [%d,%d]\n", p1X, p2X, p1Y, p2Y);
+
     if (filled > 0) {
-      // Not implemented yet
+      int y;
+      
+      for (y=p1Y; y<p2Y; y++){
+        memset(&(i->bY[y*w + p1X]), c->y, p2X-p1X); // p2X-p1X+1 ?
+      }
+      for (y=p1Y/2; y<p2Y/2; y++){
+        memset(&(i->bU[y*half_w + p1X/2]), c->u, (p2X-p1X)/2);
+        memset(&(i->bV[y*half_w + p1X/2]), c->v, (p2X-p1X)/2);
+      }
+
+      
     } else {
-      Draw_Line(i, pcX-dX/2, pcY-dY/2, pcX+dX/2, pcY-dY/2, c);
-      Draw_Line(i, pcX+dX/2, pcY-dY/2, pcX+dX/2, pcY+dY/2, c);
-      Draw_Line(i, pcX+dX/2, pcY+dY/2, pcX-dX/2, pcY+dY/2, c);
-      Draw_Line(i, pcX-dX/2, pcY+dY/2, pcX-dX/2, pcY-dY/2, c);    
+      if (top)
+        Draw_Line(i, p1X, p1Y, p2X, p1Y, c);
+      if (right)
+        Draw_Line(i, p2X, p1Y, p2X, p2Y, c); 
+      if (bottom)
+        Draw_Line(i, p2X, p2Y, p1X, p2Y, c);
+      if (left)
+        Draw_Line(i, p1X, p2Y, p1X, p1Y, c);    
     }
   }
 

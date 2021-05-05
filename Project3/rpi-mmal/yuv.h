@@ -11,7 +11,7 @@ typedef struct {
   uint8_t v;
 } YUV_T;
 
-extern YUV_T black, white, green, orange, blue, pink;
+extern YUV_T black, white, green, orange, blue, pink, red;
 
 typedef struct {
   int w, h, half_w, half_h;

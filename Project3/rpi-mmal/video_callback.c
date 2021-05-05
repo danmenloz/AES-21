@@ -55,12 +55,14 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
 	max_y = MAX(max_y, y);
 
 	matches++;
-	if (sep > 10)
-	  Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
-	else {
-	  Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
-	  Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
-	}
+        if (highlight_matches){
+          if (sep > 10)
+            Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
+          else {
+            Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
+            Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
+          }
+        }
       }
     }
   }
@@ -83,13 +85,15 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   struct timespec t1, t2;
   static struct timespec tpf;
   struct timespec tcf;
-  static long t_sum_ms = 0;
+  static double t_sum_ms = 0;
   static int loop = 0;
   static YUV_IMAGE_T img, img2;
   int translate_image = 0;
   int w=1280, h=720;
+  static int debug_rect_X=1280/2+100, debug_rect_Y=720/2-100;
   // Default target color 
-  static YUV_T target = {168, 137, 79}; //{128, 135, 64};   // Green paper
+  static YUV_T target = {64, 120, 197}; //red
+  int num_matches;
   
   clock_gettime(CLOCK_MONOTONIC, &tcf);
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
@@ -119,7 +123,22 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
     // initialize YUV_IMAGE_T data structures describing images
     YUV_Image_Init(&img, (unsigned char *) (preview_new_buffer->data), w, h); // original image
     YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
-    
+      
+    // update target color
+    YUV_T center_color;
+    Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
+    if (show_data > 2)
+      printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v); 
+    if (update_target_color) {
+      if (debug_rectangle)
+        target = red;
+      else
+        target = center_color;
+      update_target_color = 0;
+      printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v); 
+    }
+
+    // invert Y channel
     if (invert) { // Y: luminance.
       // Invert Luminance, one word at a time
       unsigned int * Y32 = (unsigned int * ) Y;
@@ -136,28 +155,29 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
       }
     }
 
-    YUV_T center_color;
-    Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
-    if (show_data > 3)
-      printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v); 
-    if (update_target_color) {
-      target = center_color;
-      update_target_color = 0;
-      printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v); 
+    // debug rectangle
+    if (debug_rectangle){
+      if ((loop & 0x0F) == 0 && debug_rectangle>1){
+        debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2;  
+        debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2; 
+      }
+      Draw_Rectangle(&img, debug_rect_X, debug_rect_Y, W_DEBUG_RECT, H_DEBUG_RECT, &red, 1);
     }
+
+    // find area matching target color
+    int centroid_x, centroid_y, offsetX, offsetY;
+    num_matches = find_chroma_matches(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
 
     // draw center circles
     draw_overlay_info(&img);
     
-    // Find area matching target color
-    int centroid_x, centroid_y, num_matches, offsetX, offsetY;
-    num_matches = find_chroma_matches(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
+    // image stabilizaton
     if (num_matches > 0) {  
       // Show centroid
       Draw_Circle(&img, centroid_x, centroid_y, 10, &white, 1);
       offsetX = img.half_w - centroid_x;
       offsetY = img.half_h - centroid_y;
-      if (show_data > 3) {
+      if (show_data > 1) {
 	printf("Match centroid at (%d, %d) for %d samples\n",
 	       centroid_x, centroid_y, num_matches);
 	printf("Offset = %d, %d\n", offsetX, offsetY);
@@ -188,7 +208,6 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   // and send one back to the port (if still open)
   if (port->is_enabled) {
     MMAL_STATUS_T status;
-
     new_buffer = mmal_queue_get(pool->queue);
     if (new_buffer)
       status = mmal_port_send_buffer(port, new_buffer);
@@ -196,6 +215,7 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
       printf("Unable to return a buffer to the video port\n");
   }
 
+  // get precessing time
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
   long t = t2.tv_nsec - t1.tv_nsec;
   if (t<0)
@@ -209,9 +229,10 @@ void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
   }
   t_sum_ms += t/1000000;
 
+  // print log
   if (show_data > 0) {
-    if ((loop & 0x0f) == 0) {
-      printf("Average frame processing time %.3f ms\n", ((float) t_sum_ms)/loop);
+    if (loop) { // change display frequency here!
+      printf("%5d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %5d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
     }
   }
   tpf = tcf;
