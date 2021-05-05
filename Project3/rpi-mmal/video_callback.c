@@ -35,7 +35,7 @@ void clear_term_screen(void) {
   printf("\033[2J");
 }
 
-int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
+int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
   int x, y;
   int matches=0;
 
@@ -46,8 +46,11 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
   YUV_T color;
   int cx=0, cy=0;
   
-  for (y = sep/2; y <= i->h - sep/2; y += sep) { 
-    for (x = sep/2; x <= i->w - sep/2; x += sep) {
+  int y_end = i->h - sep/2;
+  int x_end = i->w - sep/2;
+  
+  for (y = sep/2; y <= y_end; y += sep) { 
+    for (x = sep/2; x <= x_end; x += sep) {
       Get_Pixel_yuv(i, x,y, & color);
       // Identify pixels with right color
       int diff = Sq_UV_Difference_yuv(&color, tc);
