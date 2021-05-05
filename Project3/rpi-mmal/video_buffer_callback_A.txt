@@ -6,159 +6,159 @@ Percent
                
         3    Disassembly of section .text:
                
-        5    00013d40 <video_buffer_callback>:
+        5    00013d10 <video_buffer_callback>:
         6    video_buffer_callback():
-        242    *rcy = cy;
+        238    *rcy = cy;
                
-        244    return matches;
-        245  }          
+        240    return matches;
+        241  }          
                
-        247  void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
-  0.03         strd   r4, [sp, #-36]! ; 0xffffffdc
+        243  void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
+  0.06         strd   r4, [sp, #-36]! ; 0xffffffdc
                mov    r5, r1  
-        261    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
+        257    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
                
-        263    MMAL_BUFFER_HEADER_T *new_buffer;
-        264    MMAL_POOL_T *pool = (MMAL_POOL_T *) port->userdata;
+        259    MMAL_BUFFER_HEADER_T *new_buffer;
+        260    MMAL_POOL_T *pool = (MMAL_POOL_T *) port->userdata;
                
-        266    loop++;  
+        262    loop++;  
                movw   r4, #33016      ; 0x80f8
                movt   r4, #2  
-        242  void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
+        238  void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
                strd   r6, [sp, #8]
                mov    r7, r0  
                strd   r8, [sp, #16]
                strd   sl, [sp, #24]
                str    lr, [sp, #32]
-               vpush  {d8-d15}
-               sub    sp, sp, #100    ; 0x64
-               strd   r0, [sp, #52]   ; 0x34
-        255    clock_gettime(CLOCK_MONOTONIC, &tcf);
-               add    r1, sp, #88     ; 0x58
+  0.03         vpush  {d8-d14}
+               sub    sp, sp, #76     ; 0x4c
+               strd   r0, [sp, #28]
+        251    clock_gettime(CLOCK_MONOTONIC, &tcf);
+               add    r1, sp, #64     ; 0x40
                mov    r0, #1  
              → bl     clock_gettime@plt
-        256    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-               add    r1, sp, #72     ; 0x48
+        252    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
+               add    r1, sp, #48     ; 0x30
                mov    r0, #2  
              → bl     clock_gettime@plt
-        261    loop++;  
+        257    loop++;  
                ldr    r1, [r4]
                mov    r0, r4  
-        273    unsigned char * Y = buffer->data;
-        274    unsigned char * U = &(buffer->data[Y_array_size]);
-        275    unsigned char * V = &(buffer->data[Y_array_size + UV_array_size]);
+        269    unsigned char * Y = buffer->data;
+        270    unsigned char * U = &(buffer->data[Y_array_size]);
+        271    unsigned char * V = &(buffer->data[Y_array_size + UV_array_size]);
                
-        277    // initialize YUV_IMAGE_T data structures describing images
-        278    YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
+        273    // initialize YUV_IMAGE_T data structures describing images
+        274    YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
                mov    r3, #720        ; 0x2d0
                mov    r2, #1280       ; 0x500
-        268    unsigned char * Y = buffer->data;
+        264    unsigned char * Y = buffer->data;
                ldr    r6, [r5, #12]
-        279    YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
+        275    YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
                
-        281    // update target color
-        282    YUV_T center_color;
-        283    Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
-        284    if (show_data > 2)
+        277    // update target color
+        278    YUV_T center_color;
+        279    Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
+        280    if (show_data > 2)
                movw   r5, #32924      ; 0x809c
                movt   r5, #2  
-        259    MMAL_POOL_T *pool = (MMAL_POOL_T *) port->userdata;
+        255    MMAL_POOL_T *pool = (MMAL_POOL_T *) port->userdata;
                ldr    ip, [r7, #56]   ; 0x38
-        261    loop++;  
+        257    loop++;  
                add    r1, r1, #1
-        279    if (show_data > 2)
-               str    r5, [sp, #48]   ; 0x30
-        261    loop++;  
+        275    if (show_data > 2)
+               str    r5, [sp, #24]
+        257    loop++;  
                str    r1, [r0], #4
-        273    YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
+        269    YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
                mov    r1, r6  
-        259    MMAL_POOL_T *pool = (MMAL_POOL_T *) port->userdata;
-               str    ip, [sp, #60]   ; 0x3c
-        273    YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
+        255    MMAL_POOL_T *pool = (MMAL_POOL_T *) port->userdata;
+               str    ip, [sp, #36]   ; 0x24
+        269    YUV_Image_Init(&img, (unsigned char *) (buffer->data), w, h); // original image
              → bl     YUV_Image_Init
-        274    YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
+        270    YUV_Image_Init(&img2, img2_bitplanes, w, h); // extra space for modified image
                add    r0, r4, #32
                mov    r3, #720        ; 0x2d0
                mov    r2, #1280       ; 0x500
                movw   r1, #33128      ; 0x8168
                movt   r1, #2  
              → bl     YUV_Image_Init
-        278    Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
-               add    r3, sp, #68     ; 0x44
+        274    Get_Pixel_yuv(&img, img.half_w, img.half_h, &center_color);
+               add    r3, sp, #44     ; 0x2c
                add    r0, r4, #4
                ldr    r1, [r4, #12]
                ldr    r2, [r4, #16]
              → bl     Get_Pixel_yuv
-        279    if (show_data > 2)
+        275    if (show_data > 2)
                ldr    r3, [r5]
                cmp    r3, #2  
-             ↓ bgt    684     
-        281      printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v);
-        282    if (update_target_color) {
+             ↓ bgt    664     
+        277      printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v);
+        278    if (update_target_color) {
          b8:   movw   r2, #32996      ; 0x80e4
                movt   r2, #2  
                ldr    r3, [r2]
-        282      if (debug_rectangle)
+        278      if (debug_rectangle)
                movw   r5, #32916      ; 0x8094
                movt   r5, #2  
-        281    if (update_target_color) {
+        277    if (update_target_color) {
                cmp    r3, #0  
              ↓ beq    118     
-        282      if (debug_rectangle)
+        278      if (debug_rectangle)
                ldr    r3, [r5]
                cmp    r3, #0  
-             ↓ bne    654     
-        285        target = red;
-        286      else   
-        287        target = center_color;
-               ldrb   r0, [sp, #70]   ; 0x46
+             ↓ bne    634     
+        281        target = red;
+        282      else   
+        283        target = center_color;
+               ldrb   r0, [sp, #46]   ; 0x2e
                movw   r1, #32960      ; 0x80c0
                movt   r1, #2  
-               ldrh   r3, [sp, #68]   ; 0x44
+               ldrh   r3, [sp, #44]   ; 0x2c
                strh   r3, [r1]
                strb   r0, [r1, #2]
-        286      update_target_color = 0;
+        282      update_target_color = 0;
          f8:   mov    ip, #0  
-        287      printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v);
-               movw   r0, #31124      ; 0x7994
+        283      printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v);
+               movw   r0, #31044      ; 0x7944
                movt   r0, #1  
                ldrb   r3, [r1, #2]
-        286      update_target_color = 0;
+        282      update_target_color = 0;
                str    ip, [r2]
-        287      printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v);
+        283      printf("\nUpdated target color: (%d, %d, %d)\n", target.y, target.u, target.v);
                ldrb   r2, [r1, #1]
                ldrb   r1, [r1]
              → bl     printf@plt
-        291    }        
+        287    }        
                
-        293    // invert Y channel
-        294    if (invert) { // Y: luminance.
+        289    // invert Y channel
+        290    if (invert) { // Y: luminance.
         118:   movw   r3, #33004      ; 0x80ec
                movt   r3, #2  
                ldr    r3, [r3]
                cmp    r3, #0  
-             ↓ beq    5f8     
+             ↓ beq    5d8     
                add    r3, r6, #921600 ; 0xe1000
-        295      // Invert Luminance, one word at a time
-        296      unsigned int * Y32 = (unsigned int * ) Y;
-        297      do {   
-        298  *Y32 ^= 0xffffffff;
+        291      // Invert Luminance, one word at a time
+        292      unsigned int * Y32 = (unsigned int * ) Y;
+        293      do {   
+        294        *Y32 ^= 0xffffffff;
         130:   vld1.32 {d16-d17}, [r6]
                vmvn   q8, q8  
                vst1.32 {d16-d17}, [r6]!
-        296  Y32++;     
+        292        Y32++;
                cmp    r3, r6  
              ↑ bne    130     
-        308  }          
-        309      }      
-        310    }        
+        304        }    
+        305      }      
+        306    }        
                
-        312    // debug rectangle
-        313    if (debug_rectangle){
+        308    // debug rectangle
+        309    if (debug_rectangle){
         144:   ldr    r1, [r5]
                cmp    r1, #0  
              ↓ beq    1a4     
-        309      if ((loop & 0x0F) == 0 && debug_rectangle>1){
+        305      if ((loop & 0x0F) == 0 && debug_rectangle>1){
                ldr    r2, [r4]
                cmp    r1, #1  
                movle  r3, #0  
@@ -167,307 +167,290 @@ Percent
                cmp    r2, #0  
                movne  r3, #0  
                cmp    r3, #0  
-             ↓ bne    7d0     
+             ↓ bne    7b0     
                movw   r3, #32960      ; 0x80c0
                movt   r3, #2  
                ldr    r5, [r3, #4]
                ldr    r2, [r3, #8]
-        313        debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2;
-        314        debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2;
-        315      }      
-        316      Draw_Rectangle(&img, debug_rect_X, debug_rect_Y, W_DEBUG_RECT, H_DEBUG_RECT, &red, 1);
+        309        debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2;
+        310        debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2;
+        311      }      
+        312      Draw_Rectangle(&img, debug_rect_X, debug_rect_Y, W_DEBUG_RECT, H_DEBUG_RECT, &red, 1);
         184:   movw   ip, #32932      ; 0x80a4
                movt   ip, #2  
                mov    lr, #1  
                mov    r3, #80 ; 0x50
-               ldr    r0, [pc, #1072] ; 1430c <video_buffer_callback+0x5cc>
+               ldr    r0, [pc, #1040] ; 142bc <video_buffer_callback+0x5ac>
                mov    r1, r5  
                stm    sp, {r3, ip, lr}
              → bl     Draw_Rectangle
-        325  vld1_dup_u8():
+        321  vld1_dup_u8():
                
         10674 __extension__ extern __inline uint8x8_t
         10675 __attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
         10676 vld1_dup_u8 (const uint8_t * __a)
         10677 {           
         10678   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
-        1a4:   ldr    r2, [pc, #1052] ; 14308 <video_buffer_callback+0x5c8>
+        1a4:   ldr    r1, [pc, #1020] ; 142b8 <video_buffer_callback+0x5a8>
         10680 find_chroma_matches_neon():
-        48     YUV_T marker = pink; // higlight color
-               movw   r3, #32936      ; 0x80a8
-               movt   r3, #2  
-        51   vdupq_n_u16():
-        6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
-               vmov.i32 q10, #0 ; 0x00000000
-        6758 find_chroma_matches_neon():
-        75     for (y = sep/2; y <= h - sep/2; y += sep) {
-               mov    ip, #1  
-        46     int cx=0, cy=0;
-               mov    r9, #0  
-        48     YUV_T marker = pink; // higlight color
-               ldrh   r1, [r3]
-        46     int cx=0, cy=0;
-               mov    sl, r9  
-        75     for (y = sep/2; y <= h - sep/2; y += sep) {
-               strh   ip, [sp, #66]   ; 0x42
-        48     YUV_T marker = pink; // higlight color
-               ldrb   r3, [r3, #2]
+        47     YUV_T marker = pink; // higlight color
+               movw   r2, #32936      ; 0x80a8
+               movt   r2, #2  
         50   vdupq_n_u16():
-               vorr   q1, q10, q10
-               vorr   q8, q10, q10
-        6758 vld1_dup_u8():
+        6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
+               vmov.i32 q9, #0  ; 0x00000000
+        6758 find_chroma_matches_neon():
+        74     for (y = sep/2; y <= h - sep/2; y += sep) {
+               mov    r3, #1  
+        45     int cx=0, cy=0;
+               mov    r7, #0  
+        47   vcreate_u8():
+        6582   return (uint8x8_t)__builtin_neon_vcreatev8qi ((__builtin_neon_di) __a);
+               vldr   d28, [pc, #988] ; 142b0 <video_buffer_callback+0x5a0>
+        6584 find_chroma_matches_neon():
+               mov    r8, r7  
+        74     for (y = sep/2; y <= h - sep/2; y += sep) {
+               strh   r3, [sp, #42]   ; 0x2a
+        46     int h = i->h, w = i->w, half_w = i->half_w;
+  0.03         ldmib  r4, {r5, ip}
+        48   vdupq_n_u16():
+        6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
+               vorr   q13, q9, q9
+               vorr   q8, q9, q9
+        6759 vld1_dup_u8():
         10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
-               vld1.8 {d8[]}, [r2]!
+               vld1.8 {d30[]}, [r1]!
         10675 vdupq_n_u16():
         6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
-               vorr   q2, q10, q10
+               vorr   q11, q9, q9
         6758 find_chroma_matches_neon():
-               strh   r1, [sp, #80]   ; 0x50
-        49   vcreate_u8():
-        6582   return (uint8x8_t)__builtin_neon_vcreatev8qi ((__builtin_neon_di) __a);
-               vldr   d0, [pc, #984]  ; 14300 <video_buffer_callback+0x5c0>
-        6584 find_chroma_matches_neon():
-               strb   r3, [sp, #82]   ; 0x52
-        47     int h = i->h, w = i->w, half_w = i->half_w;
-               ldr    r7, [r4, #4]
-               ldr    r0, [r4, #8]
-               ldr    r3, [r4, #12]
-        51   vmovl_u8():
-        7673   return (uint16x8_t)__builtin_neon_vmovluv8qi ((int8x8_t) __a);
-               vmovl.u8 q9, d0
-               vmovl.u8 q4, d8
-        7676 vld1_dup_u8():
-        10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
-               vld1.8 {d10[]}, [r2]
-        10675 find_chroma_matches_neon():
-        75     for (y = sep/2; y <= h - sep/2; y += sep) {
-               cmp    r0, ip  
-        47     int h = i->h, w = i->w, half_w = i->half_w;
-               str    r3, [sp, #20]
+        47     YUV_T marker = pink; // higlight color
+               ldrh   r0, [r2]
         49   vmovl_u8():
         7673   return (uint16x8_t)__builtin_neon_vmovluv8qi ((int8x8_t) __a);
-               vstr   d18, [sp, #24]
-               vstr   d19, [sp, #32]
-        7676 find_chroma_matches_neon():
-               str    r0, [sp, #44]   ; 0x2c
+               vmovl.u8 q14, d28
+        7675 find_chroma_matches_neon():
+        74     for (y = sep/2; y <= h - sep/2; y += sep) {
+               cmp    ip, r3  
+        46     int h = i->h, w = i->w, half_w = i->half_w;
+               str    ip, [sp, #20]
+        47     YUV_T marker = pink; // higlight color
+               ldrb   r2, [r2, #2]
+        46     int h = i->h, w = i->w, half_w = i->half_w;
+               ldr    r6, [r4, #12]
+        47     YUV_T marker = pink; // higlight color
+               strh   r0, [sp, #56]   ; 0x38
+        49   vld1_dup_u8():
+        10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
+               vld1.8 {d6[]}, [r1]
+        10675 vmovl_u8(): 
+        7673   return (uint16x8_t)__builtin_neon_vmovluv8qi ((int8x8_t) __a);
+               vmovl.u8 q15, d30
+        7675 find_chroma_matches_neon():
+               strb   r2, [sp, #58]   ; 0x3a
         48   vmovl_u8():
-               vmovl.u8 q5, d10
+               vmovl.u8 q3, d6
         7674 find_chroma_matches_neon():
-        75     for (y = sep/2; y <= h - sep/2; y += sep) {
-             ↓ ble    450     
-               movw   r3, #32922      ; 0x809a
-               movt   r3, #2  
+        74     for (y = sep/2; y <= h - sep/2; y += sep) {
+             ↓ ble    430     
+               movw   r2, #32922      ; 0x809a
+               movt   r2, #2  
                movw   fp, #32992      ; 0x80e0
                movt   fp, #2  
-               str    r3, [sp, #40]   ; 0x28
-        76       for (x = 0; x < w; x += 16) {
-  0.05  230:   mov    r3, #0  
-               cmp    r7, r3  
-               strh   r3, [sp, #64]   ; 0x40
-             ↓ ble    434     
-  0.05         ldrsh  lr, [sp, #66]   ; 0x42
-        82   vdupq_n_u16():
+               str    r2, [sp, #16]
+        75       for (x = 0; x < w; x += 16) {
+  0.06  220:   mov    r2, #0  
+               cmp    r5, r2  
+  0.03         strh   r2, [sp, #40]   ; 0x28
+             ↓ ble    414     
+               ldrsh  ip, [sp, #42]   ; 0x2a
+        81   vdupq_n_u16():
         6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
-               vmov.i16 q6, #1  ; 0x0001
+               vmov.i16 q2, #1  ; 0x0001
         6758 vdup_n_u16():
         6659   return (uint16x4_t)__builtin_neon_vdup_nv4hi ((__builtin_neon_hi) __a);
-               vmov.i32 d30, #0 ; 0x00000000
-               str    r9, [sp, #16]
-        6662 find_chroma_matches_neon():
-        83         Y_image_l = vld2_u8(&(i->bY[y*w + x]));
-  6.16  250:   ldrsh  r5, [sp, #64]   ; 0x40
-        86         U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
-               add    r2, lr, lr, lsr #31
-        114          vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
-               sub    r0, lr, #1
-        82         Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
-               sub    ip, ip, #1
-        86         U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
-  4.41         ldr    r6, [sp, #20]
+               vmov.i32 d24, #0 ; 0x00000000
+               mov    r1, r3  
+               mov    r3, r2  
+               mov    r2, r1  
+        6664 find_chroma_matches_neon():
+        81         V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
+  8.61  248:   add    r1, ip, ip, lsr #31
+ 10.23         ldrsh  lr, [sp, #40]   ; 0x28
+        101          Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
+               sub    r0, ip, #1
+        80         U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
+               add    r2, r2, r2, lsr #31
+        82   vld1_u8(): 
+        10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
+  2.63         ldr    r9, [r4, #28]
+        10307 find_chroma_matches_neon():
+        81         V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
+               asr    r1, r1, #1
+        80         U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
                asr    r2, r2, #1
-        89   vld1q_dup_s16():
+        82   vld1_u8(): 
+  2.73         ldr    sl, [r4, #24]
+        10306 find_chroma_matches_neon():
+               add    r3, r3, r3, lsr #31
+        101          Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
+               mul    r0, r5, r0
+        103  vld1_u8(): 
+               mla    r1, r6, r1, r9
+        10306 vld1q_dup_s16():
                
         10740 __extension__ extern __inline int16x8_t
         10741 __attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
         10742 vld1q_dup_s16 (const int16_t * __a)
         10743 {           
         10744   return (int16x8_t)__builtin_neon_vld1_dupv8hi ((const __builtin_neon_hi *) __a);
-  2.45         ldr    r9, [sp, #40]   ; 0x28
-        10746 find_chroma_matches_neon():
-        114          vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
-               mla    r0, r7, r0, r5
-        116  vld1_u8(): 
+  3.00         ldr    r9, [sp, #16]
+        10746 vld1_u8():  
         10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
-  1.63         ldr    r8, [r4, #28]
+               mla    r2, r6, r2, sl
         10307 find_chroma_matches_neon():
-        86         U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
-               mul    r2, r6, r2
-               add    r6, r5, r5, lsr #31
-        89   vld2_u8(): 
+        112          vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
+               add    sl, r0, lr
+        114  vld1q_dup_s16():
+        10739   return (int16x8_t)__builtin_neon_vld1_dupv8hi ((const __builtin_neon_hi *) __a);
+  9.10         vld1.16 {d2[]-d3[]}, [r9]
+        10741 find_chroma_matches_neon():
+        81         V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
+               add    r9, lr, lr, lsr #31
+        83   vld1_u8(): 
+        10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
+               add    r3, r2, r3, asr #1
+               add    r1, r1, r9, asr #1
+        10308 find_chroma_matches_neon():
+        99         if (highlight_matches){
+  1.50         ldr    r2, [fp]
+        101  vld1_u8(): 
+ 15.87         vld1.8 {d21}, [r3]
+  2.97         vld1.8 {d16}, [r1]
+        10307 find_chroma_matches_neon():
+               cmp    r2, #0  
+        100  vmovl_u8():
+        7673   return (uint16x8_t)__builtin_neon_vmovluv8qi ((int8x8_t) __a);
+               vmovl.u8 q6, d21
+               vmovl.u8 q0, d16
+        7676 vsubq_s16():
+        1922   return __a - __b;
+  0.03         vsub.i16 q6, q6, q15
+               vsub.i16 q0, q0, q3
+        1925 vmulq_s16():
+        1160   return __a * __b;
+               vmul.i16 q0, q0, q0
+        1162 vaddq_s16():
+        591    return __a + __b;
+               vmla.i16 q0, q6, q6
+        593  vcleq_s16():
+        2612   return (uint16x8_t)__builtin_neon_vcgev8hi (__b, __a);
+  2.30         vcge.s16 q1, q1, q0
+        2614 find_chroma_matches_neon():
+             ↓ beq    398     
+        100  vld1_dup_u8():
+        10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
+               add    r3, sp, #56     ; 0x38
+        10675 vld2_u8():  
         11261 __extension__ extern __inline uint8x8x2_t
         11262 __attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
         11263 vld2_u8 (const uint8_t * __a)
         11264 {           
         11265   union { uint8x8x2_t __i; __builtin_neon_ti __o; } __rv;
         11266   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
-  3.86         ldr    r1, [r4, #20]
-        11268 find_chroma_matches_neon():
-               asr    r6, r6, #1
-        87   vld1q_dup_s16():
-        10739   return (int16x8_t)__builtin_neon_vld1_dupv8hi ((const __builtin_neon_hi *) __a);
-  3.83         vld1.16 {d6[]-d7[]}, [r9]
-        10741 vld1_u8():  
-        10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
-               add    r8, r8, r2
-  1.90         ldr    r9, [r4, #24]
-               add    r8, r8, r6
-        10309 vld2_u8():  
-        11261   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
-               add    r3, r1, r3
-        11263 find_chroma_matches_neon():
-        114          vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
-               add    r0, r1, r0
-        116  vld2_u8(): 
-  0.10         mla    r1, r7, lr, r1
-        11262 vld1_u8():  
-        10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
-  8.37         vld1.8 {d18}, [r8]
-        10307 vld2_u8():  
-        11261   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
-               mla    r3, r7, ip, r3
-        11263 find_chroma_matches_neon():
-        105        if (highlight_matches){
-  0.15         ldr    ip, [fp]
-        107  vld2_u8(): 
-               add    r1, r1, r5
-        11262 vld1_u8():  
-        10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
-               add    r2, r9, r2
-               add    r2, r2, r6
-        10308 vld2_u8():  
-        11261   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
- 15.28         vld2.8 {d14-d15}, [r3]
-        11263 vld1_u8():  
-        10305   return (uint8x8_t)__builtin_neon_vld1v8qi ((const __builtin_neon_qi *) __a);
-  1.60         vld1.8 {d29}, [r2]
-        10307 vmovl_u8(): 
-        7673   return (uint16x8_t)__builtin_neon_vmovluv8qi ((int8x8_t) __a);
-               vmovl.u8 q0, d18
-        7675 find_chroma_matches_neon():
-               cmp    ip, #0  
-        106  vld2_u8(): 
-        11261   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
- 12.93         vld2.8 {d22-d23}, [r1]
-        11263 vsubq_s16():
-        1922   return __a - __b;
-               vsub.i16 q0, q0, q5
-        1924 vmovl_u8():
-        7673   return (uint16x8_t)__builtin_neon_vmovluv8qi ((int8x8_t) __a);
-               vmovl.u8 q8, d29
-        7675 vmulq_s16():
-        1160   return __a * __b;
-               vmul.i16 q0, q0, q0
-        1162 vsubq_s16():
-        1922   return __a - __b;
-  0.40         vsub.i16 q8, q8, q4
-        1924 vaddq_s16():
-        591    return __a + __b;
-               vmla.i16 q0, q8, q8
-        593  vcleq_s16():
-        2612   return (uint16x8_t)__builtin_neon_vcgev8hi (__b, __a);
-               vcge.s16 q8, q3, q0
-        2614 find_chroma_matches_neon():
-             ↓ beq    3a8     
-        106  vld1_dup_u8():
-        10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
-               add    r3, sp, #80     ; 0x50
-        10675 vmovn_u16():
+               ldr    r2, [r4, #20]
+        11268 vmovn_u16():
         7568   return (uint8x8_t)__builtin_neon_vmovnv8hi ((int16x8_t) __a);
-               vmovn.i16 d19, q8
+               vmovn.i16 d17, q1
         7570 vld1_dup_u8():
         10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
-               vld1.8 {d28[]}, [r3]
-               add    r3, sp, #81     ; 0x51
-               vld1.8 {d7[]}, [r3]
-        10677 vbsl_u8():  
-        9193   return (uint8x8_t)__builtin_neon_vbslv8qi ((int8x8_t) __a, (int8x8_t) __b, (int8x8_t) __c);
-               vorr   d6, d19, d19
-        9195 vld1_dup_u8():
+               add    r1, sp, #58     ; 0x3a
+               vld1.8 {d20[]}, [r3]
+               add    r3, sp, #57     ; 0x39
+               vld1.8 {d25[]}, [r3]
+        10678 vld2_u8():  
+        11261   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
+               add    r3, r2, r0
+               mla    ip, r5, ip, r2
+        11264 find_chroma_matches_neon():
+        112          vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
+               add    r2, r2, sl
+        114  vld2_u8(): 
+               add    r3, r3, lr
+        11262 vld1_dup_u8():
         10673   return (uint8x8_t)__builtin_neon_vld1_dupv8qi ((const __builtin_neon_qi *) __a);
-               add    r3, sp, #82     ; 0x52
-               vld1.8 {d31[]}, [r3]
-               vbsl   d6, d28, d14
-        10677 vbsl_u8():  
+               vld1.8 {d14[]}, [r1]
+        10675 vld2_u8():  
+        11261   __rv.__o = __builtin_neon_vld2v8qi ((const __builtin_neon_qi *) __a);
+               vld2.8 {d12-d13}, [r3]
+               add    lr, ip, lr
+               vld2.8 {d0-d1}, [lr]
+        11265 vbsl_u8():  
         9193   return (uint8x8_t)__builtin_neon_vbslv8qi ((int8x8_t) __a, (int8x8_t) __b, (int8x8_t) __c);
-               vbit   d29, d7, d19
-               vorr   d7, d15, d15
-               vorr   d26, d6, d6
-               vorr   d6, d19, d19
-               vbit   d18, d31, d19
-        9199 find_chroma_matches_neon():
-        114          vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
-               vbit   d7, d28, d19
-               vbsl   d6, d28, d22
-               vorr   d22, d23, d23
-               vorr   d27, d7, d7
-        119  vst2_u8(): 
+               vbit   d21, d25, d17
+               vorr   d25, d17, d17
+               vbit   d16, d14, d17
+        9197 find_chroma_matches_neon():
+               vbsl   d25, d20, d12
+               vorr   d10, d25, d25
+               vorr   d25, d17, d17
+               vbsl   d25, d20, d0
+               vorr   d8, d25, d25
+               vorr   d25, d13, d13
+               vbit   d25, d20, d17
+               vbsl   d17, d20, d1
+               vorr   d11, d25, d25
+        121  vst2_u8(): 
         11766 __extension__ extern __inline void
         11767 __attribute__  ((__always_inline__, __gnu_inline__, __artificial__))
         11768 vst2_u8 (uint8_t * __a, uint8x8x2_t __b)
         11769 {           
         11770   union { uint8x8x2_t __i; __builtin_neon_ti __o; } __bu = { __b };
         11771   __builtin_neon_vst2v8qi ((__builtin_neon_qi *) __a, __bu.__o);
-               vbit   d22, d28, d19
-               vorr   d24, d6, d6
-               vst2.8 {d26-d27}, [r0]
-        11775 find_chroma_matches_neon():
-        115          vst2_u8(&(i->bY[y*w + x]), Y_image_l);
-               ldrsh  r1, [sp, #64]   ; 0x40
-               vorr   d25, d22, d22
-               ldrsh  r2, [sp, #66]   ; 0x42
+               vorr   d9, d17, d17
+               vst2.8 {d10-d11}, [r2]
+        11774 find_chroma_matches_neon():
+        113          vst2_u8(&(i->bY[y*w + x]), Y_image_l);
+               ldrsh  r1, [sp, #40]   ; 0x28
+               ldrsh  r2, [sp, #42]   ; 0x2a
                ldr    r3, [r4, #20]
-        120  vst1_u8(): 
-        10883   __builtin_neon_vst1v8qi ((__builtin_neon_qi *) __a, (int8x8_t) __b);
-               ldr    r0, [sp, #20]
-        10885 find_chroma_matches_neon():
-               mla    r2, r7, r2, r1
+               mla    r2, r5, r2, r1
                add    r3, r3, r2
-        117  vst2_u8(): 
-        11766   __builtin_neon_vst2v8qi ((__builtin_neon_qi *) __a, __bu.__o);
-               vst2.8 {d24-d25}, [r3]
-        11768 find_chroma_matches_neon():
-        117          vst1_u8(&(i->bU[y/2*half_w + x/2]), U_image_8);
-               ldrsh  r3, [sp, #66]   ; 0x42
-        119  vst1_u8(): 
+        119  vst2_u8(): 
+               vst2.8 {d8-d9}, [r3]
+        11767 find_chroma_matches_neon():
+        115          vst1_u8(&(i->bU[y/2*half_w + x/2]), U_image_8);
+               ldrsh  r3, [sp, #42]   ; 0x2a
+        117  vst1_u8(): 
         10883   __builtin_neon_vst1v8qi ((__builtin_neon_qi *) __a, (int8x8_t) __b);
                ldr    r1, [r4, #24]
         10885 find_chroma_matches_neon():
-               ldrsh  r2, [sp, #64]   ; 0x40
+               ldrsh  r2, [sp, #40]   ; 0x28
                add    r3, r3, r3, lsr #31
                asr    r3, r3, #1
                add    r2, r2, r2, lsr #31
-        121  vst1_u8(): 
-               mla    r3, r0, r3, r1
+        119  vst1_u8(): 
+               mla    r3, r6, r3, r1
                add    r3, r3, r2, asr #1
-               vst1.8 {d29}, [r3]
+               vst1.8 {d21}, [r3]
         10886 find_chroma_matches_neon():
-        118          vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
-               ldrsh  r3, [sp, #66]   ; 0x42
-        120  vst1_u8(): 
+        116          vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
+               ldrsh  r3, [sp, #42]   ; 0x2a
+        118  vst1_u8(): 
                ldr    r1, [r4, #28]
         10884 find_chroma_matches_neon():
-               ldrsh  r2, [sp, #64]   ; 0x40
+               ldrsh  r2, [sp, #40]   ; 0x28
                add    r3, r3, r3, lsr #31
                asr    r3, r3, #1
                add    r2, r2, r2, lsr #31
-        122  vst1_u8(): 
-               mla    r3, r0, r3, r1
+        120  vst1_u8(): 
+               mla    r3, r6, r3, r1
                add    r3, r3, r2, asr #1
-               vst1.8 {d18}, [r3]
-               ldrsh  lr, [sp, #66]   ; 0x42
+               vst1.8 {d16}, [r3]
+               ldrsh  ip, [sp, #42]   ; 0x2a
         10887 vld1q_dup_u16():
         10777   return (uint16x8_t)__builtin_neon_vld1_dupv8hi ((const __builtin_neon_hi *) __a);
-  1.28  3a8:   add    r3, sp, #64     ; 0x40
+        398:   add    r3, sp, #40     ; 0x28
         10779 vandq_u16():
                
         13830 __extension__ extern __inline uint16x8_t
@@ -475,85 +458,75 @@ Percent
         13832 vandq_u16 (uint16x8_t __a, uint16x8_t __b)
         13833 {           
         13834   return __a & __b;
-               vand   q8, q6, q8
+               vand   q1, q2, q1
         13836 vld1q_dup_u16():
         10777   return (uint16x8_t)__builtin_neon_vld1_dupv8hi ((const __builtin_neon_hi *) __a);
-               mov    ip, lr  
-        10779 find_chroma_matches_neon():
-        156        cy += vget_lane_u32(sum, 0);
-  8.04         ldr    r0, [sp, #16]
-        158  vld1q_dup_u16():
-  0.88         vld1.16 {d18[]-d19[]}, [r3]
-               add    r3, sp, #66     ; 0x42
-        10779 vaddq_u16():
+               mov    r2, ip  
+  2.39         vld1.16 {d20[]-d21[]}, [r3]
+               add    r3, sp, #42     ; 0x2a
+  5.70         vld1.16 {d16[]-d17[]}, [r3]
+        10782 vaddq_u16():
         630    return __a + __b;
-               vadd.i16 q2, q2, q8
-  1.20         vldr   d24, [sp, #24]
-  1.18         vldr   d25, [sp, #32]
-        634  vld1q_dup_u16():
-        10777   return (uint16x8_t)__builtin_neon_vld1_dupv8hi ((const __builtin_neon_hi *) __a);
-  1.85         vld1.16 {d22[]-d23[]}, [r3]
-        10779 find_chroma_matches_neon():
-        76       for (x = 0; x < w; x += 16) {
-  1.20         ldrh   r3, [sp, #64]   ; 0x40
-        78   vaddq_u16():
-        630    return __a + __b;
-               vadd.i16 q9, q9, q12
+               vadd.i16 q11, q11, q1
         632  find_chroma_matches_neon():
+        75       for (x = 0; x < w; x += 16) {
+  3.61         ldrh   r3, [sp, #40]   ; 0x28
+        77   vaddq_u16():
+               vadd.i16 q10, q10, q14
+        631  find_chroma_matches_neon():
                add    r3, r3, #16
                sxth   r3, r3  
-        78   vaddq_u16():
-  0.93         vmla.i16 q1, q11, q8
-        631  find_chroma_matches_neon():
-               cmp    r7, r3  
-  2.25         strh   r3, [sp, #64]   ; 0x40
-        78   vaddq_u16():
-               vmla.i16 q10, q9, q8
-               vorr   q11, q1, q1
-               vorr   q9, q10, q10
-        633  vdupq_n_u16():
+        77   vmlaq_u16():
+        1481   return (uint16x8_t)__builtin_neon_vmlav8hi ((int16x8_t) __a, (int16x8_t) __b, (int16x8_t) __c);
+  1.13         vmla.i16 q13, q1, q8
+        1483 find_chroma_matches_neon():
+               cmp    r5, r3  
+ 11.30         strh   r3, [sp, #40]   ; 0x28
+        77   vmlaq_u16():
+               vmla.i16 q9, q1, q10
+               vorr   q8, q13, q13
+               vorr   q10, q9, q9
+        1484 vdupq_n_u16():
         6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
-  1.73         vmov.i32 q10, #0 ; 0x00000000
+  1.84         vmov.i32 q9, #0  ; 0x00000000
         6758 vpadd_u16():
         3547   return (uint16x4_t)__builtin_neon_vpaddv4hi ((int16x4_t) __a, (int16x4_t) __b);
-               vpadd.i16 d17, d23, d22
-               vpadd.i16 d16, d19, d18
+               vpadd.i16 d16, d17, d16
+               vpadd.i16 d17, d21, d20
         3550 vdupq_n_u16():
         6756   return (uint16x8_t)__builtin_neon_vdup_nv8hi ((__builtin_neon_hi) __a);
-               vorr   q1, q10, q10
+               vorr   q13, q9, q9
         6758 vpadd_u16():
         3547   return (uint16x4_t)__builtin_neon_vpaddv4hi ((int16x4_t) __a, (int16x4_t) __b);
-  5.14         vpadd.i16 d17, d17, d30
-               vpadd.i16 d16, d16, d30
+ 10.96         vpadd.i16 d16, d16, d24
+               vpadd.i16 d17, d17, d24
         3550 vpaddl_u16():
         3589   return (uint32x2_t)__builtin_neon_vpaddluv4hi ((int16x4_t) __a);
-               vpaddl.u16 d17, d17
                vpaddl.u16 d16, d16
+               vpaddl.u16 d17, d17
         3592 vget_lane_u32():
         6190   return (uint32_t)__builtin_neon_vget_laneuv2si ((int32x2_t) __a, __b);
-  1.50         vmov.32 r1, d17[0]
-               vmov.32 r2, d16[0]
+  2.76         vmov.32 r0, d16[0]
+               vmov.32 r1, d17[0]
         6193 find_chroma_matches_neon():
-        156        cy += vget_lane_u32(sum, 0);
-               add    r1, r1, r0
-        146        cx += vget_lane_u32(sum, 0);
-               add    sl, r2, sl
-        156        cy += vget_lane_u32(sum, 0);
-  9.29         str    r1, [sp, #16]
-        76       for (x = 0; x < w; x += 16) {
-             ↑ bgt    250     
-  0.23         mov    r9, r1  
-        75     for (y = sep/2; y <= h - sep/2; y += sep) {
-  0.05  434:   ldr    r3, [sp, #44]   ; 0x2c
-               add    ip, ip, #2
-               sxth   ip, ip  
-               strh   ip, [sp, #66]   ; 0x42
-               cmp    r3, ip  
-             ↑ bgt    230     
-               vorr   q8, q2, q2
-        83   vpadd_u16():
+        152        cy += vget_lane_u32(sum, 0);
+               add    r7, r0, r7
+        142        cx += vget_lane_u32(sum, 0);
+               add    r8, r1, r8
+        75       for (x = 0; x < w; x += 16) {
+             ↑ bgt    248     
+  0.77         mov    r3, ip  
+        74     for (y = sep/2; y <= h - sep/2; y += sep) {
+  0.34  414:   ldr    r2, [sp, #20]
+               add    r3, r3, #2
+               sxth   r3, r3  
+               strh   r3, [sp, #42]   ; 0x2a
+               cmp    r2, r3  
+             ↑ bgt    220     
+               vorr   q8, q11, q11
+        82   vpadd_u16():
         3547   return (uint16x4_t)__builtin_neon_vpaddv4hi ((int16x4_t) __a, (int16x4_t) __b);
-        450:   vpadd.i16 d16, d17, d16
+        430:   vpadd.i16 d16, d17, d16
         3549 vdup_n_u16():
         6659   return (uint16x4_t)__builtin_neon_vdup_nv4hi ((__builtin_neon_hi) __a);
                vmov.i32 d17, #0 ; 0x00000000
@@ -567,152 +540,154 @@ Percent
         6190   return (uint32_t)__builtin_neon_vget_laneuv2si ((int32x2_t) __a, __b);
                vmov.32 r5, d16[0]
         6192 find_chroma_matches_neon():
-        177    if (matches > 0) {
+        173    if (matches > 0) {
                cmp    r5, #0  
-             ↓ ble    678     
-        178      cx /= matches;
-               sdiv   sl, sl, r5
-        180  video_buffer_callback():
-        321    // find area matching target color
-        322    int centroid_x, centroid_y, num_matches, offsetX, offsetY;
-        323    num_matches = find_chroma_matches_neon(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
+             ↓ ble    658     
+        174      cx /= matches;
+               sdiv   r8, r8, r5
+        176  video_buffer_callback():
+        317    // find area matching target color
+        318    int centroid_x, centroid_y, num_matches, offsetX, offsetY;
+        319    num_matches = find_chroma_matches_neon(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
                
-        325    // draw center circles
-        326    draw_overlay_info(&img);
-               ldr    r0, [pc, #340]  ; 1430c <video_buffer_callback+0x5cc>
-        328  find_chroma_matches_neon():
-        179      cy /= matches;
-               sdiv   r9, r9, r5
-        181  video_buffer_callback():
-        321    draw_overlay_info(&img);
+        321    // draw center circles
+        322    draw_overlay_info(&img);
+               ldr    r0, [pc, #340]  ; 142bc <video_buffer_callback+0x5ac>
+        324  find_chroma_matches_neon():
+        175      cy /= matches;
+               sdiv   r7, r7, r5
+        177  video_buffer_callback():
+        317    draw_overlay_info(&img);
              → bl     draw_overlay_info
                
-        327    // image stabilizaton
-        328    if (num_matches > 0) {
-        329      // Show centroid
-        330      Draw_Circle(&img, centroid_x, centroid_y, 10, &white, 1);
+        323    // image stabilizaton
+        324    if (num_matches > 0) {
+        325      // Show centroid
+        326      Draw_Circle(&img, centroid_x, centroid_y, 10, &white, 1);
                mov    r2, #1  
                movw   r3, #32952      ; 0x80b8
                movt   r3, #2  
-               ldr    r0, [pc, #316]  ; 1430c <video_buffer_callback+0x5cc>
-               mov    r1, sl  
+               ldr    r0, [pc, #316]  ; 142bc <video_buffer_callback+0x5ac>
+               mov    r1, r8  
                str    r3, [sp]
                mov    r3, #10 
                str    r2, [sp, #4]
-               mov    r2, r9  
+               mov    r2, r7  
              → bl     Draw_Circle
-        329      offsetX = img.half_w - centroid_x;
-        330      offsetY = img.half_h - centroid_y;
-        331      if (show_data > 1) {
-               ldr    r3, [sp, #48]   ; 0x30
-        328      offsetY = img.half_h - centroid_y;
-               ldrd   r6, [r4, #12]
-        329      if (show_data > 1) {
+        325      offsetX = img.half_w - centroid_x;
+        326      offsetY = img.half_h - centroid_y;
+        327      if (show_data > 1) {
+               ldr    r3, [sp, #24]
+        323      offsetX = img.half_w - centroid_x;
+               ldr    r6, [r4, #12]
+        324      offsetY = img.half_h - centroid_y;
+               ldr    r9, [r4, #16]
+        325      if (show_data > 1) {
                ldr    r3, [r3]
-        327      offsetX = img.half_w - centroid_x;
-               sub    r6, r6, sl
-        328      offsetY = img.half_h - centroid_y;
-               sub    r7, r7, r9
-        329      if (show_data > 1) {
+        323      offsetX = img.half_w - centroid_x;
+               sub    r6, r6, r8
+        324      offsetY = img.half_h - centroid_y;
+               sub    r9, r9, r7
+        325      if (show_data > 1) {
                cmp    r3, #1  
-             ↓ bgt    6e4     
-        335  printf("Match centroid at (%d, %d) for %d samples\n",
-        336          centroid_x, centroid_y, num_matches);
-        337  printf("Offset = %d, %d\n", offsetX, offsetY);
-        338      }      
-        339      // Correct image position
-        340      if (imstab_digital) {
-        4c0:   movw   r3, #32984      ; 0x80d8
+             ↓ bgt    6c4     
+        331        printf("Match centroid at (%d, %d) for %d samples\n",
+        332                centroid_x, centroid_y, num_matches);
+        333        printf("Offset = %d, %d\n", offsetX, offsetY);
+        334      }      
+        335      // Correct image position
+        336      if (imstab_digital) {
+        4a4:   movw   r3, #32984      ; 0x80d8
                movt   r3, #2  
                ldr    r3, [r3]
                cmp    r3, #0  
-             ↓ bne    798     
-        342  YUV_Image_Copy(&img2, &img);
-        343  //      target.y = 128; // overwrite
-        344  YUV_Image_Fill(&img, &target);
-        345  YUV_Translate_Image(&img, &img2, offsetX, offsetY, 0);
-        346      }      
-        347      if (imstab_servo) {
-        4d4:   movw   r3, #32988      ; 0x80dc
+             ↓ bne    778     
+        338        YUV_Image_Copy(&img2, &img);
+        339        //        target.y = 128; // overwrite
+        340        YUV_Image_Fill(&img, &target);
+        341        YUV_Translate_Image(&img, &img2, offsetX, offsetY, 0);
+        342      }      
+        343      if (imstab_servo) {
+        4b8:   movw   r3, #32988      ; 0x80dc
                movt   r3, #2  
                ldr    r3, [r3]
                cmp    r3, #0  
-             ↓ bne    788     
-        348  Update_Servo(offsetX, offsetY);
-        349      }      
-        350    }        
+             ↓ bne    768     
+        344        Update_Servo(offsetX, offsetY);
+        345      }      
+        346    }        
                
-        352    // Send modified image in new buffer to preview component
-        353    if (mmal_port_send_buffer(preview_input_port, buffer) != MMAL_SUCCESS) {
-        4e8:   movw   r3, #33008      ; 0x80f0
+        348    // Send modified image in new buffer to preview component
+        349    if (mmal_port_send_buffer(preview_input_port, buffer) != MMAL_SUCCESS) {
+        4cc:   movw   r3, #33008      ; 0x80f0
                movt   r3, #2  
-               ldr    r1, [sp, #56]   ; 0x38
+               ldr    r1, [sp, #32]
                ldr    r0, [r3]
              → bl     mmal_port_send_buffer@plt
                cmp    r0, #0  
-             ↓ bne    6d4     
-        352      printf("ERROR: Unable to send buffer \n");
-        353    }        
+             ↓ bne    6b4     
+        348      printf("ERROR: Unable to send buffer \n");
+        349    }        
                
-        355    mmal_buffer_header_release(buffer);
-        504:   ldr    r0, [sp, #56]   ; 0x38
+        351    mmal_buffer_header_release(buffer);
+        4e8:   ldr    r0, [sp, #32]
              → bl     mmal_buffer_header_release@plt
                
-        356    // and send one back to the port (if still open)
-        357    if (port->is_enabled) {
-               ldr    r3, [sp, #52]   ; 0x34
+        352    // and send one back to the port (if still open)
+        353    if (port->is_enabled) {
+               ldr    r3, [sp, #28]
                ldr    r3, [r3, #16]
                cmp    r3, #0  
-             ↓ bne    6a0     
-        365      if (!new_buffer || status != MMAL_SUCCESS)
-        366        printf("Unable to return a buffer to the video port\n");
-        367    }        
+             ↓ bne    680     
+        361      if (!new_buffer || status != MMAL_SUCCESS)
+        362        printf("Unable to return a buffer to the video port\n");
+        363    }        
                
-        369    // get precessing time
-        370    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-  0.03  51c:   add    r1, sp, #80     ; 0x50
+        365    // get precessing time
+        366    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
+        500:   add    r1, sp, #56     ; 0x38
                mov    r0, #2  
              → bl     clock_gettime@plt
-        366    long t = t2.tv_nsec - t1.tv_nsec;
-               ldr    r3, [sp, #76]   ; 0x4c
-               ldr    r6, [sp, #84]   ; 0x54
-        367    if (t<0) 
+        362    long t = t2.tv_nsec - t1.tv_nsec;
+               ldr    r3, [sp, #52]   ; 0x34
+               ldr    r6, [sp, #60]   ; 0x3c
+        363    if (t<0) 
                subs   r6, r6, r3
-             ↓ bpl    544     
-        368      t += 1000000000;
+             ↓ bpl    528     
+        364      t += 1000000000;
                add    r6, r6, #998244352      ; 0x3b800000
                add    r6, r6, #1753088        ; 0x1ac000
                add    r6, r6, #2560   ; 0xa00
-        369    if (loop > 1) {
-        544:   ldr    r3, [r4]
-               ldr    r2, [sp, #48]   ; 0x30
+        365    if (loop > 1) {
+        528:   ldr    r3, [r4]
+               ldr    r2, [sp, #24]
                cmp    r3, #1  
                ldr    r1, [r2]
-             ↓ ble    57c     
-        370      long period = (tcf.tv_nsec - tpf.tv_nsec);
+             ↓ ble    560     
+        366      long period = (tcf.tv_nsec - tpf.tv_nsec);
                ldr    r2, [r4, #64]   ; 0x40
-               ldr    r3, [sp, #92]   ; 0x5c
-        371      if (period < 0)
+               ldr    r3, [sp, #68]   ; 0x44
+        367      if (period < 0)
                subs   r3, r3, r2
-             ↓ bpl    574     
-        372        period += 1000000000;
+             ↓ bpl    558     
+        368        period += 1000000000;
                add    r3, r3, #998244352      ; 0x3b800000
                add    r3, r3, #1753088        ; 0x1ac000
                add    r3, r3, #2560   ; 0xa00
-        373      if (show_data > 2)
-        574:   cmp    r1, #2  
-             ↓ bgt    74c     
-        376        printf("Frame processing time: %.3f of %.3f ms\n", t/1000000.0, period/1000000.0);
-        377    }        
-        378    t_sum_ms += t/1000000;
-        57c:   movw   r3, #56963      ; 0xde83
+        369      if (show_data > 2)
+        558:   cmp    r1, #2  
+             ↓ bgt    72c     
+        372        printf("Frame processing time: %.3f of %.3f ms\n", t/1000000.0, period/1000000.0);
+        373    }        
+        374    t_sum_ms += t/1000000;
+        560:   movw   r3, #56963      ; 0xde83
                movt   r3, #17179      ; 0x431b
                asr    r2, r6, #31
                
-        380    // print log
-        381    if (show_data > 0) {
+        376    // print log
+        377    if (show_data > 0) {
                cmp    r1, #0  
-        376    t_sum_ms += t/1000000;
+        372    t_sum_ms += t/1000000;
   0.03         vldr   d16, [r4, #72]  ; 0x48
                smull  r3, r1, r3, r6
                rsb    r3, r2, r1, asr #18
@@ -720,35 +695,34 @@ Percent
                vcvt.f64.s32 d17, s15
                vadd.f64 d17, d17, d16
                vstr   d17, [r4, #72]  ; 0x48
-        379    if (show_data > 0) {
-             ↓ ble    5d0     
-        380      if (loop) { // change display frequency here!
+        375    if (show_data > 0) {
+             ↓ ble    5b0     
+        376      if (loop) { // change display frequency here!
                ldr    r1, [r4]
                cmp    r1, #0  
-             ↓ bne    714     
-             ↓ b      5d0     
-               nop    {0}     
+             ↓ bne    6f4     
+             ↓ b      5b0     
                .word  0x06040200
                .word  0x0e0c0a08
                .word  0x000280c1
                .word  0x000280fc
-        384        printf("%5d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %5d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
-        385      }      
-        386    }        
-        387    tpf = tcf;
-        5d0:   ldrd   r2, [sp, #88]   ; 0x58
+        380        printf("%5d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %5d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
+        381      }      
+        382    }        
+        383    tpf = tcf;
+        5b0:   ldrd   r2, [sp, #64]   ; 0x40
                strd   r2, [r4, #60]   ; 0x3c
-        385  }          
-               add    sp, sp, #100    ; 0x64
-               vpop   {d8-d15}
+        381  }          
+               add    sp, sp, #76     ; 0x4c
+               vpop   {d8-d14}
                ldrd   r4, [sp]
                ldrd   r6, [sp, #8]
                ldrd   r8, [sp, #16]
                ldrd   sl, [sp, #24]
                add    sp, sp, #32
                pop    {pc}            ; (ldr pc, [sp], #4)
-        298    } else if (invert_rect) {
-        5f8:   movw   r3, #33000      ; 0x80e8
+        294    } else if (invert_rect) {
+        5d8:   movw   r3, #33000      ; 0x80e8
                movt   r3, #2  
                ldr    r3, [r3]
                cmp    r3, #0  
@@ -759,23 +733,23 @@ Percent
                add    r0, r0, #240    ; 0xf0
                add    r1, r1, #16
                add    r6, r6, #1040   ; 0x410
-        242  void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
-        624:   mov    r2, r0  
+        238  void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
+        604:   mov    r2, r0  
                mov    r3, r0  
-        302    Y[y*w + x] ^= 0xff;
-        62c:   vld1.8 {d16-d17}, [r2]!
+        298          Y[y*w + x] ^= 0xff;
+        60c:   vld1.8 {d16-d17}, [r2]!
                vmvn   q8, q8  
                vst1.8 {d16-d17}, [r3]!
                cmp    r3, r1  
-             ↑ bne    62c     
+             ↑ bne    60c     
                add    r1, r1, #1280   ; 0x500
                add    r0, r0, #1280   ; 0x500
-        300      for (y = h/2 - H_INVERT_RECT/2; y < h/2 + H_INVERT_RECT/2; y++) {
+        296      for (y = h/2 - H_INVERT_RECT/2; y < h/2 + H_INVERT_RECT/2; y++) {
                cmp    r1, r6  
-             ↑ bne    624     
+             ↑ bne    604     
              ↑ b      144     
-        283        target = red;
-        654:   movw   r3, #32932      ; 0x80a4
+        279        target = red;
+        634:   movw   r3, #32932      ; 0x80a4
                movt   r3, #2  
                ldrh   r0, [r3]
                movw   r1, #32960      ; 0x80c0
@@ -784,61 +758,61 @@ Percent
                strh   r0, [r1]
                strb   r3, [r1, #2]
              ↑ b      f8      
-        321    draw_overlay_info(&img);
-        678:   ldr    r0, [pc, #-180] ; 1430c <video_buffer_callback+0x5cc>
+        317    draw_overlay_info(&img);
+        658:   ldr    r0, [pc, #-180] ; 142bc <video_buffer_callback+0x5ac>
              → bl     draw_overlay_info
-        324    if (num_matches > 0) {
-             ↑ b      4e8     
-        280      printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v);
-        684:   movw   r0, #31092      ; 0x7974
+        320    if (num_matches > 0) {
+             ↑ b      4cc     
+        276      printf("\nCenter pixel: (%d, %d, %d)\n", center_color.y, center_color.u, center_color.v);
+        664:   movw   r0, #31012      ; 0x7924
                movt   r0, #1  
-               ldrb   r3, [sp, #70]   ; 0x46
-               ldrb   r2, [sp, #69]   ; 0x45
-               ldrb   r1, [sp, #68]   ; 0x44
+               ldrb   r3, [sp, #46]   ; 0x2e
+               ldrb   r2, [sp, #45]   ; 0x2d
+               ldrb   r1, [sp, #44]   ; 0x2c
              → bl     printf@plt
              ↑ b      b8      
-        357      new_buffer = mmal_queue_get(pool->queue);
-        6a0:   ldr    r3, [sp, #60]   ; 0x3c
+        353      new_buffer = mmal_queue_get(pool->queue);
+        680:   ldr    r3, [sp, #36]   ; 0x24
                ldr    r0, [r3]
              → bl     mmal_queue_get@plt
-        358      if (new_buffer)
+        354      if (new_buffer)
                subs   r1, r0, #0
-             ↓ beq    6c4     
-        359        status = mmal_port_send_buffer(port, new_buffer);
-               ldr    r0, [sp, #52]   ; 0x34
+             ↓ beq    6a4     
+        355        status = mmal_port_send_buffer(port, new_buffer);
+               ldr    r0, [sp, #28]
              → bl     mmal_port_send_buffer@plt
-        360      if (!new_buffer || status != MMAL_SUCCESS)
+        356      if (!new_buffer || status != MMAL_SUCCESS)
                cmp    r0, #0  
-             ↑ beq    51c     
-        361        printf("Unable to return a buffer to the video port\n");
-        6c4:   movw   r0, #31260      ; 0x7a1c
+             ↑ beq    500     
+        357        printf("Unable to return a buffer to the video port\n");
+        6a4:   movw   r0, #31180      ; 0x79cc
                movt   r0, #1  
              → bl     puts@plt
-             ↑ b      51c     
-        349      printf("ERROR: Unable to send buffer \n");
-        6d4:   movw   r0, #31228      ; 0x79fc
+             ↑ b      500     
+        345      printf("ERROR: Unable to send buffer \n");
+        6b4:   movw   r0, #31148      ; 0x79ac
                movt   r0, #1  
              → bl     puts@plt
-             ↑ b      504     
-        330  printf("Match centroid at (%d, %d) for %d samples\n",
-        6e4:   mov    r2, r9  
-               mov    r1, sl  
+             ↑ b      4e8     
+        326        printf("Match centroid at (%d, %d) for %d samples\n",
+        6c4:   mov    r2, r7  
+               mov    r1, r8  
                mov    r3, r5  
-               movw   r0, #31164      ; 0x79bc
+               movw   r0, #31084      ; 0x796c
                movt   r0, #1  
              → bl     printf@plt
-        332  printf("Offset = %d, %d\n", offsetX, offsetY);
-               mov    r2, r7  
+        328        printf("Offset = %d, %d\n", offsetX, offsetY);
+               mov    r2, r9  
                mov    r1, r6  
-               movw   r0, #31208      ; 0x79e8
+               movw   r0, #31128      ; 0x7998
                movt   r0, #1  
              → bl     printf@plt
-             ↑ b      4c0     
-        381        printf("%5d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %5d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
-        714:   vmov   s15, r1 
-               movw   r0, #31344      ; 0x7a70
+             ↑ b      4a4     
+        377        printf("%5d Frame processing times:  Cur. %.6f ms  |  Avg. %.6f ms  |  matches: %5d\n", loop, t/1000000.0, ((double) t_sum_ms)/loop, num_matches);
+        6f4:   vmov   s15, r1 
+               movw   r0, #31264      ; 0x7a20
                movt   r0, #1  
-               vldr   d19, [pc, #264] ; 14570 <video_buffer_callback+0x830>
+               vldr   d19, [pc, #264] ; 14520 <video_buffer_callback+0x810>
                str    r5, [sp, #8]
                vcvt.f64.s32 d20, s15
                vmov   s15, r6 
@@ -848,12 +822,12 @@ Percent
                vmov   r2, r3, d16
                vstr   d18, [sp]
              → bl     printf@plt
-             ↑ b      5d0     
-        374        printf("Frame processing time: %.3f of %.3f ms\n", t/1000000.0, period/1000000.0);
-        74c:   vmov   s15, r3 
-               movw   r0, #31304      ; 0x7a48
+             ↑ b      5b0     
+        370        printf("Frame processing time: %.3f of %.3f ms\n", t/1000000.0, period/1000000.0);
+        72c:   vmov   s15, r3 
+               movw   r0, #31224      ; 0x79f8
                movt   r0, #1  
-               vldr   d18, [pc, #208] ; 14570 <video_buffer_callback+0x830>
+               vldr   d18, [pc, #208] ; 14520 <video_buffer_callback+0x810>
                vcvt.f64.s32 d16, s15
                vmov   s15, r6 
                vmul.f64 d16, d16, d18
@@ -862,33 +836,33 @@ Percent
                vmul.f64 d17, d17, d18
                vmov   r2, r3, d17
              → bl     printf@plt
-               ldr    r3, [sp, #48]   ; 0x30
+               ldr    r3, [sp, #24]
                ldr    r1, [r3]
-             ↑ b      57c     
-        343  Update_Servo(offsetX, offsetY);
-        788:   mov    r1, r7  
+             ↑ b      560     
+        339        Update_Servo(offsetX, offsetY);
+        768:   mov    r1, r9  
                mov    r0, r6  
              → bl     Update_Servo
-             ↑ b      4e8     
-        337  YUV_Image_Copy(&img2, &img);
-        798:   ldr    r1, [pc, #156]  ; 1457c <video_buffer_callback+0x83c>
+             ↑ b      4cc     
+        333        YUV_Image_Copy(&img2, &img);
+        778:   ldr    r1, [pc, #156]  ; 1452c <video_buffer_callback+0x81c>
                add    r0, r1, #28
              → bl     YUV_Image_Copy
-        339  YUV_Image_Fill(&img, &target);
-               ldr    r0, [pc, #144]  ; 1457c <video_buffer_callback+0x83c>
+        335        YUV_Image_Fill(&img, &target);
+               ldr    r0, [pc, #144]  ; 1452c <video_buffer_callback+0x81c>
                movw   r1, #32960      ; 0x80c0
                movt   r1, #2  
              → bl     YUV_Image_Fill
-        340  YUV_Translate_Image(&img, &img2, offsetX, offsetY, 0);
-               ldr    r1, [pc, #132]  ; 14580 <video_buffer_callback+0x840>
-               mov    r3, r7  
+        336        YUV_Translate_Image(&img, &img2, offsetX, offsetY, 0);
+               ldr    r1, [pc, #132]  ; 14530 <video_buffer_callback+0x820>
+               mov    r3, r9  
                mov    r2, r6  
-               vldr   s0, [pc, #112]  ; 14578 <video_buffer_callback+0x838>
+               vldr   s0, [pc, #112]  ; 14528 <video_buffer_callback+0x818>
                sub    r0, r1, #28
              → bl     YUV_Translate_Image
-             ↑ b      4d4     
-        310        debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2;
-        7d0: → bl     rand@plt
+             ↑ b      4b8     
+        306        debug_rect_X = rand()%(w-W_DEBUG_RECT) + W_DEBUG_RECT/2;
+        7b0: → bl     rand@plt
                movw   r2, #33205      ; 0x81b5
                movt   r2, #6990       ; 0x1b4e
                asr    r3, r0, #31
@@ -900,7 +874,7 @@ Percent
                mls    r3, r5, r3, r0
                add    r5, r3, #40     ; 0x28
                str    r5, [r6, #4]
-        311        debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2;
+        307        debug_rect_Y = rand()%(h-H_DEBUG_RECT) + H_DEBUG_RECT/2;
              → bl     rand@plt
                movw   r3, #26215      ; 0x6667
                movt   r3, #26214      ; 0x6666
