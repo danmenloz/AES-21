@@ -18,6 +18,8 @@
 
 #include "PCA9685_servo_driver.h"
 
+#define MIN_MAX_CENTROID 0
+
 unsigned char img2_bitplanes[1280*720*3/2];
 
 void draw_overlay_info(YUV_IMAGE_T * i) {
@@ -36,7 +38,10 @@ void clear_term_screen(void) {
 int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
   int x, y;
   int matches=0;
-  unsigned int min_x=0xffffffff, max_x=0, min_y=0xffffffff, max_y=0;
+
+  #if MIN_MAX_CENTROID
+    unsigned int min_x=0xffffffff, max_x=0, min_y=0xffffffff, max_y=0;
+  #endif  
   int offsetX=0, offsetY=0;
   YUV_T color;
   int cx=0, cy=0;
@@ -49,10 +54,12 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
       if (diff < color_threshold) {
 	cx += x;
 	cy += y;
-	min_x = MIN(min_x, x);
-	max_x = MAX(max_x, x);
-	min_y = MIN(min_y, y);
-	max_y = MAX(max_y, y);
+  #if MIN_MAX_CENTROID
+  min_x = MIN(min_x, x);
+  max_x = MAX(max_x, x);
+  min_y = MIN(min_y, y);
+  max_y = MAX(max_y, y);
+  #endif
 
 	matches++;
         if (highlight_matches){
@@ -67,12 +74,12 @@ int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int s
     }
   }
   if (matches > 0) {
-#if 1
-    cx /= matches;
-    cy /= matches;
-#else
+#if MIN_MAX_CENTROID
     cx = (max_x+min_x)/2;
     cy = (max_y+min_y)/2;
+#else
+    cx /= matches;
+    cy /= matches;
 #endif
   }
   *rcx = cx;

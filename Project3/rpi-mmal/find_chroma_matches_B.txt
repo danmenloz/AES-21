@@ -9,27 +9,27 @@ Percent
         5    00013640 <find_chroma_matches>:
         6    find_chroma_matches():
                
-        37   void clear_term_screen(void) {
-        38     printf("\033[2J");
-        39   }          
+        39   void clear_term_screen(void) {
+        40     printf("\033[2J");
+        41   }          
                
-        41   int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
+        43   int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
                push   {r4, r5, r6, r7, r8, r9, sl, fp, lr}
                sub    sp, sp, #52     ; 0x34
                mov    r5, r0  
                ldr    r8, [sp, #88]   ; 0x58
                mov    r7, r1  
-        44     unsigned int min_x=0xffffffff, max_x=0, min_y=0xffffffff, max_y=0;
-        45     int offsetX=0, offsetY=0;
-        46     YUV_T color;
-        47     int cx=0, cy=0;
+        49     #endif   
+        50     int offsetX=0, offsetY=0;
+        51     YUV_T color;
+        52     int cx=0, cy=0;
                
-        49     for (y = sep/2; y <= i->h - sep/2; y += sep) {
+        54     for (y = sep/2; y <= i->h - sep/2; y += sep) {
                ldr    r1, [r5, #4]
                add    r0, r8, r8, lsr #31
-        36   int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
+        38   int find_chroma_matches(YUV_IMAGE_T * i, YUV_T * tc, int * rcx, int * rcy, int sep){
                strd   r2, [sp, #32]
-        44     for (y = sep/2; y <= i->h - sep/2; y += sep) {
+        49     for (y = sep/2; y <= i->h - sep/2; y += sep) {
                asr    r6, r0, #1
                rsb    r9, r6, #0
                add    r1, r1, r9
@@ -37,29 +37,29 @@ Percent
                str    r6, [sp, #24]
              ↓ bgt    1b4     
                ldr    r3, [r5]
-        42     int cx=0, cy=0;
+        47     int cx=0, cy=0;
                mov    sl, #0  
                add    r3, r3, r9
-        38     int matches=0;
+        40     int matches=0;
                mov    fp, sl  
-        42     int cx=0, cy=0;
+        47     int cx=0, cy=0;
                str    sl, [sp, #20]
-        45       for (x = sep/2; x <= i->w - sep/2; x += sep) {
+        50       for (x = sep/2; x <= i->w - sep/2; x += sep) {
   0.03   4c:   ldr    r2, [sp, #24]
                cmp    r2, r3  
-        63           if (highlight_matches){
-        64             if (sep > 10)
-        65               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
-        66             else {
-        67               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
-        68               Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
+        70           if (highlight_matches){
+        71             if (sep > 10)
+        72               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
+        73             else {
+        74               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
+        75               Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
                addle  r3, r6, r9
                movle  r4, r2  
   0.05         strle  r3, [sp, #28]
-        45       for (x = sep/2; x <= i->w - sep/2; x += sep) {
+        50       for (x = sep/2; x <= i->w - sep/2; x += sep) {
              ↓ ble    98      
              ↓ b      160     
-        60               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
+        67               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
          68:   ldr    r3, [pc, #340]  ; 13804 <find_chroma_matches+0x1c4>
                str    lr, [sp, #8]
                str    r3, [sp, #4]
@@ -67,37 +67,37 @@ Percent
                mov    r3, ip  
                mov    r1, r4  
              → bl     Draw_Rectangle
-        45       for (x = sep/2; x <= i->w - sep/2; x += sep) {
- 37.81   84:   ldr    r3, [r5]
+        50       for (x = sep/2; x <= i->w - sep/2; x += sep) {
+ 37.27   84:   ldr    r3, [r5]
                add    r4, r4, r8
                add    r3, r3, r9
                cmp    r3, r4  
-  0.35       ↓ blt    158     
-        46         Get_Pixel_yuv(i, x,y, & color);
-  7.74   98:   add    r3, sp, #44     ; 0x2c
+  0.31       ↓ blt    158     
+        51         Get_Pixel_yuv(i, x,y, & color);
+  8.00   98:   add    r3, sp, #44     ; 0x2c
                mov    r2, r6  
                mov    r1, r4  
                mov    r0, r5  
-  0.16       → bl     Get_Pixel_yuv
-        52   Sq_UV_Difference_yuv():
+  0.35       → bl     Get_Pixel_yuv
+        57   Sq_UV_Difference_yuv():
                
         35   inline __attribute__((always_inline)) int Sq_UV_Difference_yuv(YUV_T * c1, YUV_T * c2){
         36     int du, dv;
                
         38     du = (int) c1->u - c2->u;
         39     dv = (int) c1->v - c2->v;
-  1.29         ldrb   r1, [r7, #2]
- 34.08         ldrb   r3, [sp, #46]   ; 0x2e
+  0.90         ldrb   r1, [r7, #2]
+ 34.98         ldrb   r3, [sp, #46]   ; 0x2e
         33     du = (int) c1->u - c2->u;
-  0.74         ldrb   r2, [sp, #45]   ; 0x2d
-  7.49         ldrb   ip, [r7, #1]
+  0.87         ldrb   r2, [sp, #45]   ; 0x2d
+  7.59         ldrb   ip, [r7, #1]
         34     dv = (int) c1->v - c2->v;
                sub    r3, r3, r1
         36   find_chroma_matches():
-        49         if (diff < color_threshold) {
-  0.85         ldr    r1, [pc, #256]  ; 13808 <find_chroma_matches+0x1c8>
-  8.38         ldrsh  r0, [r1]
-        52   Sq_UV_Difference_yuv():
+        54         if (diff < color_threshold) {
+  0.71         ldr    r1, [pc, #256]  ; 13808 <find_chroma_matches+0x1c8>
+  7.77         ldrsh  r0, [r1]
+        57   Sq_UV_Difference_yuv():
         35     return du*du + dv*dv;
                mul    r1, r3, r3
         33     du = (int) c1->u - c2->u;
@@ -105,45 +105,45 @@ Percent
         35     return du*du + dv*dv;
                mla    r3, r3, r3, r1
         37   find_chroma_matches():
-  0.50         cmp    r0, r3  
+  0.71         cmp    r0, r3  
              ↑ ble    84      
-        58           if (highlight_matches){
-  0.44         ldr    r3, [pc, #232]  ; 1380c <find_chroma_matches+0x1cc>
-        50           cx += x;
+        65           if (highlight_matches){
+  0.27         ldr    r3, [pc, #232]  ; 1380c <find_chroma_matches+0x1cc>
+        55           cx += x;
                ldr    r2, [sp, #20]
-        51           cy += y;
+        56           cy += y;
                add    sl, sl, r6
-        58           if (highlight_matches){
-  0.01         ldr    r3, [r3]
-        50           cx += x;
+        65           if (highlight_matches){
+  0.04         ldr    r3, [r3]
+        55           cx += x;
                add    r2, r2, r4
-        58           if (highlight_matches){
+        65           if (highlight_matches){
                cmp    r3, #0  
-        50           cx += x;
+        55           cx += x;
                str    r2, [sp, #20]
-        57           matches++;
+        64           matches++;
                add    fp, fp, #1
-        58           if (highlight_matches){
+        65           if (highlight_matches){
              ↑ beq    84      
-        62               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
+        69               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
                ldr    r3, [sp, #24]
-        59             if (sep > 10)
+        66             if (sep > 10)
                cmp    r8, #10 
-        62               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
+        69               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
                add    r3, r3, r4
                add    r1, r4, r9
                mov    r2, r6  
                mov    r0, r5  
-        60               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
+        67               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
                sub    ip, r8, #2
                mov    lr, #0  
-        59             if (sep > 10)
+        66             if (sep > 10)
              ↑ bgt    68      
-        62               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
+        69               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
                ldr    ip, [pc, #152]  ; 13804 <find_chroma_matches+0x1c4>
                stm    sp, {r6, ip}
              → bl     Draw_Line
-        63               Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
+        70               Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
                ldr    r3, [sp, #24]
                ldr    ip, [pc, #136]  ; 13804 <find_chroma_matches+0x1c4>
                add    r3, r3, r6
@@ -154,57 +154,57 @@ Percent
                mov    r0, r5  
              → bl     Draw_Line
              ↑ b      84      
-  0.08  158:   ldr    r1, [r5, #4]
+  0.15  158:   ldr    r1, [r5, #4]
                add    r1, r1, r9
-        44     for (y = sep/2; y <= i->h - sep/2; y += sep) {
+        49     for (y = sep/2; y <= i->h - sep/2; y += sep) {
         160:   add    r6, r6, r8
                cmp    r1, r6  
              ↑ bge    4c      
-        69             }
-        70           }  
-        71         }    
-        72       }      
-        73     }        
-        74     if (matches > 0) {
+        76             }
+        77           }  
+        78         }    
+        79       }      
+        80     }        
+        81     if (matches > 0) {
                cmp    fp, #0  
              ↓ beq    194     
-        71   #if 1      
-        72       cx /= matches;
+        81   #if MIN_MAX_CENTROID
+        82       cx = (max_x+min_x)/2;
+        83       cy = (max_y+min_y)/2;
+        84   #else      
+        85       cx /= matches;
                ldr    r0, [sp, #20]
                mov    r1, fp  
              → bl     __aeabi_idiv
-        72       cy /= matches;
+        82       cy /= matches;
                mov    r1, fp  
-        71       cx /= matches;
+        81       cx /= matches;
                str    r0, [sp, #20]
-        72       cy /= matches;
+        82       cy /= matches;
                mov    r0, sl  
              → bl     __aeabi_idiv
                mov    sl, r0  
-        78   #else      
-        79       cx = (max_x+min_x)/2;
-        80       cy = (max_y+min_y)/2;
-        81   #endif     
-        82     }        
-        83     *rcx = cx;
+        85   #endif     
+        86     }        
+        87     *rcx = cx;
         194:   ldr    r3, [sp, #32]
                ldr    r2, [sp, #20]
-        82     *rcy = cy;
+        89     *rcy = cy;
                
-        84     return matches;
-        85   }          
+        91     return matches;
+        92   }          
                mov    r0, fp  
-        78     *rcx = cx;
+        85     *rcx = cx;
                str    r2, [r3]
-        79     *rcy = cy;
+        86     *rcy = cy;
                ldr    r3, [sp, #36]   ; 0x24
                str    sl, [r3]
-        82   }          
+        89   }          
                add    sp, sp, #52     ; 0x34
                pop    {r4, r5, r6, r7, r8, r9, sl, fp, pc}
-        38     int matches=0;
+        40     int matches=0;
         1b4:   mov    fp, #0  
-        42     int cx=0, cy=0;
+        47     int cx=0, cy=0;
                mov    sl, fp  
                str    fp, [sp, #20]
              ↑ b      194     
