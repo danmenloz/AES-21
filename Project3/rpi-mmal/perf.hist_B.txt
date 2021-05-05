@@ -1,123 +1,121 @@
-  33.76%  vc.ril.camera    libarmmem-v7l.so      [.] memcpy
-  23.69%  vc.ril.camera    istool1               [.] Get_Pixel_yuv
-  22.36%  vc.ril.camera    istool1               [.] find_chroma_matches
-  14.06%  vc.ril.camera    istool1               [.] Sq_UV_Difference_yuv
-   3.94%  vc.ril.camera    libarmmem-v7l.so      [.] memset
-   0.17%  istool1          libc-2.28.so          [.] __clock_gettime
-   0.12%  VCHIQ completio  libmmal_vc_client.so  [.] mmal_vc_port_send_callback
-   0.12%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_shm_unlock
-   0.12%  vc.ril.camera    istool1               [.] Draw_Circle
-   0.12%  vc.ril.camera    libc-2.28.so          [.] vfprintf
-   0.08%  vc.ril.camera    istool1               [.] video_buffer_callback
-   0.06%  vc.ril.camera    libpthread-2.28.so    [.] __pthread_mutex_lock
-   0.05%  vc.ril.camera    libc-2.28.so          [.] __GI___printf_fp_l
-   0.05%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_shm_lock
-   0.05%  vc.ril.camera    istool1               [.] Draw_Line
+  34.88%  vc.ril.camera    istool1               [.] find_chroma_matches
+  34.38%  vc.ril.camera    libarmmem-v7l.so      [.] memcpy
+  24.75%  vc.ril.camera    istool1               [.] Get_Pixel_yuv
+   3.95%  vc.ril.camera    libarmmem-v7l.so      [.] memset
+   0.11%  vc.ril.camera    libc-2.28.so          [.] vfprintf
+   0.09%  istool1          libc-2.28.so          [.] __clock_gettime
+   0.09%  vc.ril.camera    istool1               [.] Draw_Line
+   0.09%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_shm_unlock
+   0.08%  VCHIQ completio  libpthread-2.28.so    [.] __pthread_mutex_lock
+   0.07%  VCHIQ completio  libmmal_vc_client.so  [.] mmal_vc_port_send_callback
+   0.07%  vc.ril.camera    istool1               [.] Draw_Circle
+   0.06%  vc.ril.camera    istool1               [.] video_buffer_callback
+   0.06%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_port_send
+   0.05%  VCHIQ completio  libmmal_vc_client.so  [.] mmal_component_action_trigger@plt
+   0.05%  vc.ril.video_re  libmmal_vc_client.so  [.] mmal_vc_shm_lock
+   0.05%  VCHIQ completio  libmmal_vc_client.so  [.] mmal_vc_vchiq_callback
    0.05%  vc.ril.camera    istool1               [.] YUV_Translate_Image
-   0.04%  VCHIQ completio  libpthread-2.28.so    [.] __pthread_mutex_lock
-   0.04%  VCHIQ completio  libvcos.so            [.] vcos_generic_blockpool_free
-   0.04%  vc.ril.camera    istool1               [.] memcpy@plt
-   0.04%  VCHIQ completio  libmmal_vc_client.so  [.] mmal_vc_vchiq_callback
-   0.04%  VCHIQ completio  libpthread-2.28.so    [.] __pthread_mutex_unlock_usercnt
-   0.04%  vc.ril.camera    libvchiq_arm.so       [.] vchiq_queue_message
-   0.04%  vc.ril.video_re  libmmal_vc_client.so  [.] mmal_vc_shm_lock
-   0.03%  VCHIQ completio  libc-2.28.so          [.] pthread_mutex_lock
+   0.05%  vc.ril.camera    libc-2.28.so          [.] __GI___printf_fp_l
+   0.04%  vc.ril.camera    libc-2.28.so          [.] __GI___libc_write
+   0.03%  VCHIQ completio  libpthread-2.28.so    [.] sem_post@@GLIBC_2.4
+   0.03%  vc.ril.camera    istool1               [.] memcpy@plt
+   0.03%  vc.ril.camera    libmmal_core.so       [.] mmal_port_send_buffer
+   0.03%  vc.ril.camera    libvcos.so            [.] vcos_generic_blockpool_alloc
    0.03%  VCHIQ completio  libc-2.28.so          [.] __GI___ioctl
-   0.03%  vc.ril.camera    libc-2.28.so          [.] __strchrnul
-   0.03%  vc.ril.camera    libc-2.28.so          [.] pthread_mutex_lock
+   0.03%  VCHIQ completio  libpthread-2.28.so    [.] __pthread_mutex_unlock_usercnt
+   0.03%  VCHIQ completio  libvcos.so            [.] vcos_generic_blockpool_free
    0.02%  VCHIQ completio  libvchiq_arm.so       [.] completion_thread
-   0.02%  vc.ril.camera    libmmal_core.so       [.] mmal_port_send_buffer
-   0.02%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_port_send
-   0.02%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_send_message
+   0.02%  vc.ril.camera    libc-2.28.so          [.] _IO_file_xsputn@@GLIBC_2.4
+   0.02%  vc.ril.camera    libc-2.28.so          [.] __mpn_lshift
    0.02%  vc.ril.camera    libpthread-2.28.so    [.] __pthread_mutex_unlock_usercnt
-   0.02%  VCHIQ completio  libc-2.28.so          [.] pthread_mutex_unlock
-   0.02%  VCHIQ completio  libpthread-2.28.so    [.] sem_post@@GLIBC_2.4
+   0.02%  VCHIQ completio  libc-2.28.so          [.] pthread_mutex_lock
+   0.02%  VCHIQ completio  libmmal_core.so       [.] mmal_queue_put
    0.02%  vc.ril.camera    istool1               [.] YUV_Image_Fill
-   0.02%  vc.ril.camera    libc-2.28.so          [.] __GI___ioctl
+   0.02%  vc.ril.camera    libc-2.28.so          [.] __mpn_mul_1
+   0.02%  vc.ril.camera    libc-2.28.so          [.] __strchrnul
    0.02%  vc.ril.camera    libc-2.28.so          [.] memcpy
-   0.02%  vc.ril.camera    libc-2.28.so          [.] new_do_write
-   0.02%  vc.ril.camera    libc-2.28.so          [.] pthread_mutex_unlock
-   0.02%  vc.ril.camera    libpthread-2.28.so    [.] __new_sem_wait_slow.constprop.1
-   0.01%  VCHIQ completio  libmmal_vc_client.so  [.] mmal_component_action_trigger@plt
-   0.01%  istool1          istool1               [.] delay_ms
-   0.01%  vc.ril.camera    istool1               [.] Draw_Rectangle
-   0.01%  vc.ril.camera    libc-2.28.so          [.] __clock_gettime
-   0.01%  vc.ril.camera    libc-2.28.so          [.] read_int
-   0.01%  vc.ril.camera    libc-2.28.so          [.] strlen
-   0.01%  vc.ril.camera    libmmal_core.so       [.] mmal_pool_buffer_header_release
-   0.01%  vc.ril.camera    libpthread-2.28.so    [.] do_futex_wait.constprop.2
-   0.01%  vc.ril.camera    libvchiq_arm.so       [.] ioctl@plt
-   0.01%  vc.ril.camera    libvchiq_arm.so       [.] vchiq_queue_bulk_transmit
-   0.01%  vc.ril.video_re  libpthread-2.28.so    [.] pthread_testcancel
-   0.01%  VCHIQ completio  libvchiq_arm.so       [.] pthread_mutex_lock@plt
-   0.01%  istool1          istool1               [.] delay_us
-   0.01%  istool1          ld-2.28.so            [.] do_lookup_x
-   0.01%  vc.ril.camera    istool1               [.] __aeabi_idiv
-   0.01%  vc.ril.camera    libc-2.28.so          [.] _IO_file_overflow@@GLIBC_2.4
-   0.01%  vc.ril.camera    libc-2.28.so          [.] _IO_file_xsputn@@GLIBC_2.4
+   0.02%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_shm_lock
+   0.02%  vc.ril.camera    libpthread-2.28.so    [.] __pthread_mutex_lock
+   0.02%  vc.ril.camera    libvchiq_arm.so       [.] ioctl@plt
+   0.02%  vc.ril.video_re  libpthread-2.28.so    [.] __pthread_mutex_lock
+   0.01%  VCHIQ completio  libc-2.28.so          [.] pthread_mutex_unlock
+   0.01%  VCHIQ completio  libmmal_core.so       [.] mmal_component_action_trigger
+   0.01%  VCHIQ completio  libvchiq_arm.so       [.] vchiq_release_message
+   0.01%  istool1          libarmmem-v7l.so      [.] memset
    0.01%  vc.ril.camera    libc-2.28.so          [.] _IO_padn
+   0.01%  vc.ril.camera    libc-2.28.so          [.] __GI___ioctl
+   0.01%  vc.ril.camera    libc-2.28.so          [.] __libc_enable_asynccancel
+   0.01%  vc.ril.camera    libc-2.28.so          [.] _itoa_word
+   0.01%  vc.ril.camera    libc-2.28.so          [.] new_do_write
+   0.01%  vc.ril.camera    libc-2.28.so          [.] printf
+   0.01%  vc.ril.camera    libc-2.28.so          [.] pthread_mutex_lock
+   0.01%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_do_callback_loop
+   0.01%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_send_message
+   0.01%  vc.ril.camera    libvchiq_arm.so       [.] vchiq_queue_message
+   0.01%  VCHIQ completio  libvchiq_arm.so       [.] vchiq_queue_bulk_receive
+   0.01%  VCHIQ completio  libvcos.so            [.] pthread_mutex_lock@plt
+   0.01%  VCHIQ completio  libvcos.so            [.] pthread_mutex_unlock@plt
+   0.01%  vc.ril.camera    istool1               [.] Draw_Rectangle
+   0.01%  vc.ril.camera    libc-2.28.so          [.] _IO_file_overflow@@GLIBC_2.4
    0.01%  vc.ril.camera    libc-2.28.so          [.] __aeabi_uidiv
    0.01%  vc.ril.camera    libc-2.28.so          [.] __libc_alloca_cutoff
-   0.01%  vc.ril.camera    libc-2.28.so          [.] __overflow
-   0.01%  vc.ril.camera    libc-2.28.so          [.] __printf_fp
-   0.01%  vc.ril.camera    libc-2.28.so          [.] printf
-   0.01%  vc.ril.camera    libmmal_core.so       [.] mmal_buffer_header_release
-   0.01%  vc.ril.camera    libmmal_core.so       [.] mmal_component_action_thread_func
-   0.01%  vc.ril.camera    libmmal_vc_client.so  [.] vchiq_queue_bulk_transmit@plt
-   0.01%  vc.ril.camera    libmmal_vc_client.so  [.] vcos_generic_blockpool_alloc@plt
-   0.01%  vc.ril.video_re  libmmal_core.so       [.] mmal_buffer_header_driver_data
-   0.01%  vc.ril.video_re  libpthread-2.28.so    [.] __pthread_mutex_lock
-   0.01%  vc.ril.video_re  libpthread-2.28.so    [.] __pthread_mutex_unlock_usercnt
+   0.01%  vc.ril.camera    libc-2.28.so          [.] hack_digit
+   0.01%  vc.ril.camera    libc-2.28.so          [.] strlen
+   0.01%  vc.ril.camera    libmmal_core.so       [.] mmal_queue_length
+   0.01%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_get_client@plt
+   0.01%  vc.ril.camera    libmmal_vc_client.so  [.] pthread_mutex_unlock@plt
+   0.01%  vc.ril.camera    libpthread-2.28.so    [.] sem_trywait@@GLIBC_2.4
+   0.01%  vc.ril.camera    libvcos.so            [.] gettimeofday@plt
+   0.01%  vc.ril.camera    libvcos.so            [.] pthread_mutex_lock@plt
+   0.01%  vc.ril.video_re  libmmal_core.so       [.] mmal_buffer_header_release
+   0.01%  vc.ril.video_re  libmmal_vc_client.so  [.] mmal_vc_do_callback.isra.2
    0.01%  vc.ril.video_re  libpthread-2.28.so    [.] __sem_wait_32_finish
-   0.00%  VCHIQ completio  libmmal_core.so       [.] mmal_component_action_trigger
-   0.00%  VCHIQ completio  libmmal_core.so       [.] mmal_queue_put
+   0.01%  vc.ril.video_re  libpthread-2.28.so    [.] pthread_testcancel
    0.00%  VCHIQ completio  libmmal_core.so       [.] pthread_mutex_unlock@plt
-   0.00%  VCHIQ completio  libmmal_vc_client.so  [.] vchiq_queue_bulk_receive@plt
+   0.00%  VCHIQ completio  libmmal_vc_client.so  [.] vchiq_release_message@plt
    0.00%  VCHIQ completio  libpthread-2.28.so    [.] sem_getvalue@@GLIBC_2.4
    0.00%  VCHIQ completio  libvchiq_arm.so       [.] ioctl@plt
    0.00%  VCHIQ completio  libvchiq_arm.so       [.] pthread_mutex_unlock@plt
-   0.00%  VCHIQ completio  libvchiq_arm.so       [.] vchiq_queue_bulk_receive
-   0.00%  VCHIQ completio  libvcos.so            [.] pthread_mutex_lock@plt
-   0.00%  istool1          istool1               [.] clock_gettime@plt
-   0.00%  istool1          ld-2.28.so            [.] _dl_allocate_tls_init
-   0.00%  istool1          ld-2.28.so            [.] _dl_relocate_object
-   0.00%  istool1          ld-2.28.so            [.] strcmp
+   0.00%  istool1          istool1               [.] delay_ms
+   0.00%  istool1          istool1               [.] pinMode
+   0.00%  istool1          istool1               [.] sccb_bus_write_byte
+   0.00%  istool1          ld-2.28.so            [.] __aeabi_uidiv
+   0.00%  istool1          ld-2.28.so            [.] __aeabi_uidivmod
+   0.00%  istool1          ld-2.28.so            [.] _dl_cache_libcmp
+   0.00%  istool1          ld-2.28.so            [.] _dl_lookup_symbol_x
+   0.00%  istool1          ld-2.28.so            [.] _dl_sort_maps
+   0.00%  istool1          ld-2.28.so            [.] do_lookup_x
+   0.00%  istool1          ld-2.28.so            [.] memcmp
+   0.00%  istool1          libc-2.28.so          [.] _IO_str_init_static_internal
    0.00%  istool1          libc-2.28.so          [.] _dl_addr
-   0.00%  vc.ril.camera    istool1               [.] .divsi3_skip_div0_test
-   0.00%  vc.ril.camera    istool1               [.] draw_overlay_info
-   0.00%  vc.ril.camera    istool1               [.] memset@plt
-   0.00%  vc.ril.camera    istool1               [.] mmal_buffer_header_release@plt
+   0.00%  vc.ril.camera    istool1               [.] __aeabi_idiv
    0.00%  vc.ril.camera    libc-2.28.so          [.] _IO_do_write@@GLIBC_2.4
    0.00%  vc.ril.camera    libc-2.28.so          [.] _IO_file_write@@GLIBC_2.4
-   0.00%  vc.ril.camera    libc-2.28.so          [.] __GI___libc_write
+   0.00%  vc.ril.camera    libc-2.28.so          [.] __aeabi_uidivmod
+   0.00%  vc.ril.camera    libc-2.28.so          [.] __clock_gettime
    0.00%  vc.ril.camera    libc-2.28.so          [.] __gettimeofday
-   0.00%  vc.ril.camera    libc-2.28.so          [.] __libc_enable_asynccancel
-   0.00%  vc.ril.camera    libc-2.28.so          [.] __mpn_extract_double
-   0.00%  vc.ril.camera    libc-2.28.so          [.] __mpn_lshift
-   0.00%  vc.ril.camera    libc-2.28.so          [.] _itoa_word
-   0.00%  vc.ril.camera    libmmal_core.so       [.] mmal_buffer_header_release_continue
-   0.00%  vc.ril.camera    libmmal_core.so       [.] mmal_port_buffer_header_callback
-   0.00%  vc.ril.camera    libmmal_core.so       [.] mmal_queue_put
+   0.00%  vc.ril.camera    libc-2.28.so          [.] __overflow
+   0.00%  vc.ril.camera    libc-2.28.so          [.] __printf_fp
+   0.00%  vc.ril.camera    libc-2.28.so          [.] pthread_mutex_unlock
+   0.00%  vc.ril.camera    libc-2.28.so          [.] read_int
+   0.00%  vc.ril.camera    libmmal_core.so       [.] mmal_pool_buffer_header_release
    0.00%  vc.ril.camera    libmmal_core.so       [.] mmal_queue_put@plt
-   0.00%  vc.ril.camera    libmmal_core.so       [.] pthread_mutex_unlock@plt
-   0.00%  vc.ril.camera    libmmal_core.so       [.] vcos_getmicrosecs64_internal@plt
-   0.00%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_do_callback.isra.2
-   0.00%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_do_callback_loop
-   0.00%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_send_message@plt
-   0.00%  vc.ril.camera    libmmal_vc_client.so  [.] mmal_vc_shm_unlock@plt
-   0.00%  vc.ril.camera    libmmal_vc_client.so  [.] pthread_mutex_unlock@plt
+   0.00%  vc.ril.camera    libmmal_vc_client.so  [.] vcos_generic_blockpool_alloc@plt
+   0.00%  vc.ril.camera    libpthread-2.28.so    [.] __pthread_disable_asynccancel
    0.00%  vc.ril.camera    libpthread-2.28.so    [.] __pthread_enable_asynccancel
    0.00%  vc.ril.camera    libpthread-2.28.so    [.] __sem_wait_32_finish
-   0.00%  vc.ril.camera    libpthread-2.28.so    [.] _pthread_cleanup_pop_restore
    0.00%  vc.ril.camera    libpthread-2.28.so    [.] pthread_testcancel
-   0.00%  vc.ril.camera    libvcos.so            [.] pthread_mutex_lock@plt
-   0.00%  vc.ril.camera    libvcos.so            [.] vcos_generic_blockpool_alloc
+   0.00%  vc.ril.camera    libvchiq_arm.so       [.] vchiq_queue_bulk_transmit
+   0.00%  vc.ril.camera    libvcos.so            [.] vcos_getmicrosecs64_internal
    0.00%  vc.ril.video_re  istool1               [.] mmal_buffer_header_release@plt
    0.00%  vc.ril.video_re  istool1               [.] preview_buffer_callback
-   0.00%  vc.ril.video_re  libmmal_core.so       [.] mmal_buffer_header_release
-   0.00%  vc.ril.video_re  libmmal_core.so       [.] mmal_buffer_header_release_continue
-   0.00%  vc.ril.video_re  libmmal_core.so       [.] mmal_pool_buffer_header_release
-   0.00%  vc.ril.video_re  libmmal_vc_client.so  [.] mmal_vc_do_callback.isra.2
+   0.00%  vc.ril.video_re  libc-2.28.so          [.] pthread_mutex_lock
+   0.00%  vc.ril.video_re  libmmal_core.so       [.] mmal_port_buffer_header_callback
+   0.00%  vc.ril.video_re  libmmal_core.so       [.] mmal_queue_get
+   0.00%  vc.ril.video_re  libmmal_vc_client.so  [.] pthread_mutex_unlock@plt
+   0.00%  vc.ril.video_re  libpthread-2.28.so    [.] __aeabi_read_tp
    0.00%  vc.ril.video_re  libpthread-2.28.so    [.] __new_sem_wait_slow.constprop.1
-   0.00%  vc.ril.video_re  libpthread-2.28.so    [.] __pthread_disable_asynccancel
+   0.00%  vc.ril.video_re  libpthread-2.28.so    [.] __pthread_enable_asynccancel
+   0.00%  vc.ril.video_re  libpthread-2.28.so    [.] _pthread_cleanup_pop
    0.00%  vc.ril.video_re  libpthread-2.28.so    [.] do_futex_wait.constprop.2
+   0.00%  vc.ril.video_re  libpthread-2.28.so    [.] sem_trywait@@GLIBC_2.4

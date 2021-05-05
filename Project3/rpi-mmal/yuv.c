@@ -46,14 +46,6 @@ void Get_Pixel_yuv(YUV_IMAGE_T * i, int px, int py, YUV_T * yuv) {
   yuv->v = i->bV[half_px+half_py*i->half_w];
 }
 
-int Sq_UV_Difference_yuv(YUV_T * c1, YUV_T * c2){
-  int du, dv;
-  
-  du = (int) c1->u - c2->u;
-  dv = (int) c1->v - c2->v;
-  return du*du + dv*dv;
-}
-
 void YUV_Image_Copy(YUV_IMAGE_T * dst, YUV_IMAGE_T * src) {
   // Copy bitplanes
   // Warning: assumes images are same size. Should check for this.
@@ -525,7 +517,7 @@ void Draw_Line(YUV_IMAGE_T * img, int p1X, int p1Y, int p2X, int p2Y, YUV_T * co
 }
 
   /* Draw a rectangle at coordinates xm, ym with specified sides and color c. */
- void Draw_Rectangle(YUV_IMAGE_T * i, int pcX, int pcY, int dX, int dY, YUV_T * c, int filled) {
+void Draw_Rectangle(YUV_IMAGE_T * i, int pcX, int pcY, int dX, int dY, YUV_T * c, int filled) {
     int h = i->h, w = i->w, half_w = i->half_w;
     int p1Y, p2Y;
     int p1X, p2X;
