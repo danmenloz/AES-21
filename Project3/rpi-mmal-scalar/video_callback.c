@@ -74,13 +74,8 @@ int find_chroma_matches_neon(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *r
   for (y = sep/2; y <= h - sep/2; y += sep) { 
     for (x = 0; x < w; x += 16) {
       int16x8_t du, dv, mu, mv, sq_uv_diff;
-      uint16x8_t posX, posY, masked_pos_X, masked_pos_Y, mask;
-      uint8x8_t mask_vis;
+      uint16x8_t posX, posY, mask;
       
-      // read Y channel, upper row and lower row
-      Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
-      Y_image_l = vld2_u8(&(i->bY[y*w + x]));
-
       // read U and V channels
       U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
       V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
@@ -102,6 +97,10 @@ int find_chroma_matches_neon(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *r
 
       // highlighting mask
       if (highlight_matches){
+        // read Y channel, upper row and lower row
+        Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
+        Y_image_l = vld2_u8(&(i->bY[y*w + x]));
+
         Y_image_u.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[0]);
         Y_image_u.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[1]);
         Y_image_l.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[0]);
@@ -124,13 +123,11 @@ int find_chroma_matches_neon(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *r
       posX = vaddq_u16(pos_X_inc, vld1q_dup_u16(&x));
       posY = vld1q_dup_u16(&y);
 
-      // mask pos
-      masked_pos_X = vmulq_u16(mask, posX);
-      masked_pos_Y = vmulq_u16(mask, posY);
+      // vector sums using mask
+      sum_pos_X = vmlaq_u16(sum_pos_X, mask, posX);
+      sum_pos_Y = vmlaq_u16(sum_pos_Y, mask, posY);
 
-      // vector sums
-      sum_pos_X = vaddq_u16(sum_pos_X, masked_pos_X);
-      sum_pos_Y = vaddq_u16(sum_pos_Y, masked_pos_Y);
+      // matches vector sum
       sum_matches = vaddq_u16(sum_matches, mask);
 
       // pos scalar sums have to happen inside the loop. O.W. lanes will overflow.
@@ -161,7 +158,7 @@ int find_chroma_matches_neon(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *r
     }
   }
 
-  // scalar sum matches
+  // matches scalar sum
   // safe to sum here since lanes didn't overflow
   sum_u = vget_high_u16(sum_matches);
   sum_l = vget_low_u16(sum_matches);
