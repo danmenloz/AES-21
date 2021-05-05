@@ -6,7 +6,7 @@ Percent
                
         3    Disassembly of section .text:
                
-        5    000136e8 <find_chroma_matches>:
+        5    00013690 <find_chroma_matches>:
         6    find_chroma_matches():
                
         37   void clear_term_screen(void) {
@@ -44,7 +44,7 @@ Percent
         38     int matches=0;
                mov    sl, r9  
         45       for (x = sep/2; x <= i->w - sep/2; x += sep) {
-  0.06   4c:   ldr    r2, [sp, #24]
+  0.04   4c:   ldr    r2, [sp, #24]
                cmp    r2, r3  
         63           if (highlight_matches){
         64             if (sep > 10)
@@ -54,12 +54,12 @@ Percent
         68               Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
                addle  r3, r6, r8
                movle  r4, r2  
-  0.04         strle  r3, [sp, #28]
+  0.06         strle  r3, [sp, #28]
         45       for (x = sep/2; x <= i->w - sep/2; x += sep) {
              ↓ ble    98      
              ↓ b      144     
         60               Draw_Rectangle(i, x, y, sep-2, sep-2, &pink, 0);
-         68:   ldr    r3, [pc, #308]  ; 1388c <find_chroma_matches+0x1a4>
+         68:   ldr    r3, [pc, #308]  ; 13834 <find_chroma_matches+0x1a4>
                str    lr, [sp, #8]
                str    r3, [sp, #4]
                str    ip, [sp]
@@ -67,28 +67,28 @@ Percent
                mov    r1, r4  
              → bl     Draw_Rectangle
         45       for (x = sep/2; x <= i->w - sep/2; x += sep) {
- 60.04   84:   ldr    r3, [r5]
+ 60.42   84:   ldr    r3, [r5]
                add    r4, r4, r7
                add    r3, r3, r8
                cmp    r3, r4  
-  0.04       ↓ blt    13c     
+  0.02       ↓ blt    13c     
         46         Get_Pixel_yuv(i, x,y, & color);
- 12.73   98:   add    r3, sp, #44     ; 0x2c
+ 12.95   98:   add    r3, sp, #44     ; 0x2c
                mov    r2, r6  
                mov    r1, r4  
                mov    r0, r5  
   0.02       → bl     Get_Pixel_yuv
         48         int diff = Sq_UV_Difference_yuv(&color, tc);
- 12.85         ldr    r1, [sp, #20]
+ 12.65         ldr    r1, [sp, #20]
                add    r0, sp, #44     ; 0x2c
              → bl     Sq_UV_Difference_yuv
         49         if (diff < color_threshold) {
- 13.11         ldr    r3, [pc, #232]  ; 13890 <find_chroma_matches+0x1a8>
-  0.32         ldrsh  r3, [r3]
+ 12.73         ldr    r3, [pc, #232]  ; 13838 <find_chroma_matches+0x1a8>
+  0.29         ldrsh  r3, [r3]
                cmp    r3, r0  
              ↑ ble    84      
         58           if (highlight_matches){
-  0.42         ldr    r3, [pc, #220]  ; 13894 <find_chroma_matches+0x1ac>
+  0.53         ldr    r3, [pc, #220]  ; 1383c <find_chroma_matches+0x1ac>
         50           cx += x;
                add    fp, fp, r4
         51           cy += y;
@@ -115,12 +115,12 @@ Percent
         59             if (sep > 10)
              ↑ bgt    68      
         62               Draw_Line(i, x-sep/2, y, x+sep/2, y, &pink);
-               ldr    ip, [pc, #148]  ; 1388c <find_chroma_matches+0x1a4>
+               ldr    ip, [pc, #148]  ; 13834 <find_chroma_matches+0x1a4>
                stm    sp, {r6, ip}
              → bl     Draw_Line
         63               Draw_Line(i, x, y-sep/2, x, y+sep/2, &pink);
                ldr    r3, [sp, #24]
-               ldr    ip, [pc, #132]  ; 1388c <find_chroma_matches+0x1a4>
+               ldr    ip, [pc, #132]  ; 13834 <find_chroma_matches+0x1a4>
                add    r3, r3, r6
                ldr    r2, [sp, #28]
                stm    sp, {r3, ip}
@@ -129,7 +129,7 @@ Percent
                mov    r0, r5  
              → bl     Draw_Line
              ↑ b      84      
-  0.38  13c:   ldr    r1, [r5, #4]
+  0.28  13c:   ldr    r1, [r5, #4]
                add    r1, r1, r8
         44     for (y = sep/2; y <= i->h - sep/2; y += sep) {
         144:   add    r6, r6, r7
