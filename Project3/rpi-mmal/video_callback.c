@@ -15,6 +15,9 @@
 #include "video_callback.h"
 #include "is_options.h"
 #include "yuv.h"
+#include <arm_neon.h>
+#include <arm_acle.h>
+
 
 #include "PCA9685_servo_driver.h"
 
@@ -35,10 +38,155 @@ void clear_term_screen(void) {
   printf("\033[2J");
 }
 
+int find_chroma_matches_neon(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
+  short int x, y;
+  int matches=0;
+  int offsetX=0, offsetY=0;
+  YUV_T color;
+  int cx=0, cy=0;
+  int h = i->h, w = i->w, half_w = i->half_w;
+  YUV_T marker = pink; // higlight color
+  sep = 2; //override chroma subsample separation
+
+  // Neon types
+  int16x8_t V_target, V_image, U_target, U_image;
+  uint16x8_t sum_pos_X, sum_pos_Y, pos_X_inc, sum_matches;
+  uint8x8_t V_target_8, V_image_8, U_target_8, U_image_8, pos_X_inc_8; 
+  uint8x8x2_t Y_image_l, Y_image_u; // This a 2 vector variable. Each vector has eight lanes of 8-bit data.
+  uint16x4_t sum_u, sum_l;
+  uint32x2_t sum;
+
+  // initialize sums
+  sum_pos_X = vdupq_n_u16(0);
+  sum_pos_Y = vdupq_n_u16(0);
+  sum_matches = vdupq_n_u16(0);
+
+  // posX increment: 0 2 4 6 8 10 12 14
+  pos_X_inc_8 = vcreate_u8(0x0E0C0A0806040200);
+  pos_X_inc = vmovl_u8(pos_X_inc_8);
+
+  // target U and V channels
+  U_target_8 = vld1_dup_u8(&(tc->u));
+  V_target_8 = vld1_dup_u8(&(tc->v));
+
+  U_target = vreinterpretq_s16_u16(vmovl_u8(U_target_8));
+  V_target = vreinterpretq_s16_u16(vmovl_u8(V_target_8));
+
+  for (y = sep/2; y <= h - sep/2; y += sep) { 
+    for (x = 0; x < w; x += 16) {
+      int16x8_t du, dv, mu, mv, sq_uv_diff;
+      uint16x8_t posX, posY, masked_pos_X, masked_pos_Y, mask;
+      uint8x8_t mask_vis;
+      
+      // read Y channel, upper row and lower row
+      Y_image_u = vld2_u8(&(i->bY[(y-1)*w + x]));
+      Y_image_l = vld2_u8(&(i->bY[y*w + x]));
+
+      // read U and V channels
+      U_image_8 = vld1_u8(&(i->bU[y/2*half_w + x/2]));
+      V_image_8 = vld1_u8(&(i->bV[y/2*half_w + x/2]));
+
+      // upgrade to signed 16 bits
+      U_image = vreinterpretq_s16_u16(vmovl_u8(U_image_8));
+      V_image = vreinterpretq_s16_u16(vmovl_u8(V_image_8));
+
+      // square UV difference
+      du = vsubq_s16(U_image, U_target);
+      dv = vsubq_s16(V_image, V_target);
+
+      mu = vmulq_s16(du,du);
+      mv = vmulq_s16(dv,dv);
+
+      sq_uv_diff = vaddq_s16(mu, mv);
+      
+      mask = vcleq_s16(sq_uv_diff, vld1q_dup_s16(&(color_threshold)));
+
+      // highlighting mask
+      if (highlight_matches){
+        Y_image_u.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[0]);
+        Y_image_u.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_u.val[1]);
+        Y_image_l.val[0] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[0]);
+        Y_image_l.val[1] = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.y)), Y_image_l.val[1]);
+
+        U_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.u)), U_image_8);
+        V_image_8 = vbsl_u8(vmovn_u16(mask), vld1_dup_u8(&(marker.v)), V_image_8);
+
+        vst2_u8(&(i->bY[(y-1)*w + x]), Y_image_u);
+        vst2_u8(&(i->bY[y*w + x]), Y_image_l);
+
+        vst1_u8(&(i->bU[y/2*half_w + x/2]), U_image_8);
+        vst1_u8(&(i->bV[y/2*half_w + x/2]), V_image_8);
+      }
+
+      // convert mask: 11111111 11111111 ... -> 00000001 00000001 ...
+      mask = vandq_u16(mask, vdupq_n_u16(1));
+
+      // read pos
+      posX = vaddq_u16(pos_X_inc, vld1q_dup_u16(&x));
+      posY = vld1q_dup_u16(&y);
+
+      // mask pos
+      masked_pos_X = vmulq_u16(mask, posX);
+      masked_pos_Y = vmulq_u16(mask, posY);
+
+      // vector sums
+      sum_pos_X = vaddq_u16(sum_pos_X, masked_pos_X);
+      sum_pos_Y = vaddq_u16(sum_pos_Y, masked_pos_Y);
+      sum_matches = vaddq_u16(sum_matches, mask);
+
+      // pos scalar sums have to happen inside the loop. O.W. lanes will overflow.
+      // sum pos X
+      sum_u = vget_high_u16(sum_pos_X);
+      sum_l = vget_low_u16(sum_pos_X);
+
+      sum_u = vpadd_u16(sum_u, sum_l);
+      sum_u = vpadd_u16(sum_u, vdup_n_u16(0));
+
+      sum = vpaddl_u16(sum_u);
+      cx += vget_lane_u32(sum, 0);
+      
+      // sum pos Y
+      sum_u = vget_high_u16(sum_pos_Y);
+      sum_l = vget_low_u16(sum_pos_Y);
+
+      sum_u = vpadd_u16(sum_u, sum_l);
+      sum_u = vpadd_u16(sum_u, vdup_n_u16(0));
+
+      sum = vpaddl_u16(sum_u);
+      cy += vget_lane_u32(sum, 0);
+
+      // reset pos sums
+      sum_pos_X = vdupq_n_u16(0);
+      sum_pos_Y = vdupq_n_u16(0);
+
+    }
+  }
+
+  // scalar sum matches
+  // safe to sum here since lanes didn't overflow
+  sum_u = vget_high_u16(sum_matches);
+  sum_l = vget_low_u16(sum_matches);
+
+  sum_u = vpadd_u16(sum_u, sum_l);
+  sum_u = vpadd_u16(sum_u, vdup_n_u16(0));
+
+  sum = vpaddl_u16(sum_u);
+  matches = vget_lane_u32(sum, 0);
+
+  // update centroid
+  if (matches > 0) {
+    cx /= matches;
+    cy /= matches;
+  }
+  *rcx = cx;
+  *rcy = cy;
+      
+  return matches;
+}
+
 int find_chroma_matches(YUV_IMAGE_T *restrict i, YUV_T *restrict tc, int *restrict rcx, int *restrict rcy, int sep){
   int x, y;
   int matches=0;
-
   #if MIN_MAX_CENTROID
     unsigned int min_x=0xffffffff, max_x=0, min_y=0xffffffff, max_y=0;
   #endif  
@@ -167,7 +315,7 @@ for (x = w/2 - W_INVERT_RECT/2; x < w/2 + W_INVERT_RECT/2; x++) {
 
   // find area matching target color
   int centroid_x, centroid_y, num_matches, offsetX, offsetY;
-  num_matches = find_chroma_matches(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
+  num_matches = find_chroma_matches_neon(&img, &target, &centroid_x, &centroid_y, chroma_subsample_sep);
 
   // draw center circles
   draw_overlay_info(&img);
